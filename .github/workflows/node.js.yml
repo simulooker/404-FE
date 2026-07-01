@@ -1,31 +1,50 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-
-name: Node.js CI
+name: Deploy Vite Project to GitHub Pages
 
 on:
   push:
-    branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    branches: [ "master" ] # master 브랜치에 코드가 올라가면 실행
+
+# 배포를 위한 깃허브 권한 설정
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 동시에 여러 배포가 돌 때 충돌 방지
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
 
 jobs:
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-latest
 
-    strategy:
-      matrix:
-        node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
-
     steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 1. 에러가 나던 Node.js 버전을 22버전으로 고정합니다.
+    - name: Set up Node.js
       uses: actions/setup-node@v4
       with:
-        node-version: ${{ matrix.node-version }}
+        node-version: 22
         cache: 'npm'
-    - run: npm ci
-    - run: npm run build --if-present
-    - run: npm test
+
+    # 2. 의존성 라이브러리 설치
+    - name: Install dependencies
+      run: npm ci
+
+    # 3. 리액트 프로젝트 빌드 (dist 폴더 생성)
+    - name: Build project
+      run: npm run build
+
+    # 4. 빌드된 결과를 깃허브 서버에 업로드
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: './dist' # Vite 빌드 결과물이 저장되는 폴더명
+
+    # 5. 깃허브 페이지스에 최종 배포
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v4
