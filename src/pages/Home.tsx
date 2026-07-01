@@ -1,25 +1,29 @@
 import { useNavigate } from "react-router-dom";
+import lolImg from "../assets/squareset/lolsquare.png";
+import valorantImg from "../assets/squareset/valorantsquare.png";
+import overwatchImg from "../assets/squareset/overwatchsquare.png";
+import pubgImg from "../assets/squareset/pubgsquare.png";
 
 const games = [
   {
     name: "LEAGUE OF LEGENDS",
     players: "1.4천 명 플레이 중",
-    image: "src/assets/squareset/lolsquare.png",
+    image: lolImg,
   },
   {
     name: "VALORANT",
     players: "1.1천 명 플레이 중",
-    image: "src/assets/squareset/valorantsquare.png",
+    image: valorantImg,
   },
   {
     name: "OVERWATCH",
     players: "800명 플레이 중",
-    image: "src/assets/squareset/overwatchsquare.png",
+    image: overwatchImg,
   },
   {
     name: "PUBG",
     players: "800명 플레이 중",
-    image: "src/assets/squareset/pubgsquare.png",
+    image: pubgImg,
   },
 ];
 function Home() {
