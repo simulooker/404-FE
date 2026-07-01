@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { HashRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import GameResult from "./pages/GameResult";
 import Home from "./pages/Home";
@@ -11,7 +11,7 @@ import "./App.css";
 
 function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <Routes>
         <Route element={<Layout />}>
           <Route path="/" element={<Login />} />
@@ -23,7 +23,7 @@ function App() {
           <Route path="/mypage" element={<MyPage />} />
         </Route>
       </Routes>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
 
