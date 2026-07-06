@@ -9,11 +9,13 @@
 .app-layout {
   max-width: 430px;
   margin: 0 auto;
+  height: 100dvh;
   min-height: 100vh;
   background: white;
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
 }
 
@@ -25,17 +27,30 @@
 }
 
 .mypage-page {
+  height: calc(100dvh - 72px);
   padding-top: 12px;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .mypage-brand-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
+  justify-content: center;
+  position: relative;
+  height: 48px;
+  gap: 0;
+  margin-bottom: 10px;
+  flex: 0 0 auto;
 }
 
 .mypage-brand-mark {
+  position: absolute;
+  left: 20px;
+  top: 30px;
   width: 38px;
   height: 38px;
   display: flex;
@@ -45,18 +60,19 @@
 }
 
 .mypage-brand-mark__img {
-  width: 100%;
-  height: 100%;
+  width: 300%;
+  height: 300%;
   object-fit: contain;
   display: block;
 }
 
 .mypage-brand-title {
   margin: 0;
-  font-size: 30px;
+  font-size: 25px;
   line-height: 1;
   font-weight: 800;
   letter-spacing: -0.02em;
+  transform: translateX(-60px);
 }
 
 .mypage-brand-title__game {
@@ -70,38 +86,65 @@
   color: transparent;
 }
 
+.mypage-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  position: relative;
+}
+
+.mypage-mascot-overlap {
+  position: absolute;
+  top: 0;
+  right: 40px;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.mypage-profile-overlap {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  justify-content: center;
+  flex: 0 0 auto;
+  margin-bottom: -50px;
+}
+
 .mypage-hero {
   position: relative;
   border-radius: 24px;
   overflow: hidden;
   background: #2b0f3f;
-  min-height: calc(100vh - 170px);
-  padding: 70px 18px 18px;
+  flex: 1;
+  min-height: 0;
+  padding: 38px 18px 12px;
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
 }
 
 .mypage-hero__bg {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
+  object-position: center top;
   z-index: 0;
 }
 
 .mypage-hero__mascot {
-  position: absolute;
-  top: 12px;
-  right: 18px;
-  width: 90px;
-  height: 90px;
+  width: 100px;
+  height: 100px;
   object-fit: contain;
-  z-index: 2;
+  display: block;
 }
 
 .mypage-hero__setting {
   position: absolute;
-  top: 68px;
+  top: 18px;
   right: 18px;
   border: 0;
   background: transparent;
@@ -111,8 +154,8 @@
 }
 
 .mypage-hero__setting-icon {
-  width: 24px;
-  height: 24px;
+  width: 30px;
+  height: 30px;
   object-fit: contain;
   display: block;
 }
@@ -125,33 +168,39 @@
   align-items: center;
   text-align: center;
   color: white;
-  transform: translateY(-26px);
+  flex: 0 0 auto;
 }
 
 .mypage-profile__avatar {
-  width: 104px;
-  height: 104px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
-  background: #eceff3;
+  background: transparent;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #4b5563;
-  font-size: 50px;
-  border: 5px solid #2b0f3f;
+  border: 5px;
   margin-top: 0;
+  overflow: hidden;
+}
+
+.mypage-profile__avatar-img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
 }
 
 .mypage-profile__name {
-  margin: 8px 0 4px;
-  font-size: 34px;
+  margin: 10px 0 2px;
+  font-size: 26px;
   line-height: 1;
   font-weight: 800;
 }
 
 .mypage-profile__meta {
   margin: 0;
-  font-size: 17px;
+  font-size: 15px;
   font-weight: 700;
 }
 
@@ -162,34 +211,44 @@
 .mypage-tags {
   display: flex;
   gap: 8px;
-  margin-top: 10px;
+  margin-top: 8px;
 }
 
 .mypage-tag {
-  padding: 6px 12px;
+  padding: 5px 10px;
   border-radius: 999px;
   background: rgba(229, 231, 235, 0.92);
   color: #111827;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 700;
 }
 
 .mypage-matches {
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  margin-top: 14px;
-  max-height: calc(100vh - 300px);
+  gap: 10px;
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
-  padding-bottom: 16px;
+  padding-top: 25px;
+  padding-bottom: 8px;
   padding-right: 4px;
+  position: relative;
+  z-index: 3;
+  overscroll-behavior: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.mypage-matches::-webkit-scrollbar {
+  display: none;
 }
 
 .mypage-match-card {
   position: relative;
-  min-height: 132px;
-  border-radius: 22px;
-  padding: 18px 18px 14px;
+  min-height: 160px;
+  border-radius: 20px;
+  padding: 14px 16px 12px;
   box-sizing: border-box;
   overflow: hidden;
   flex: 0 0 auto;
@@ -198,20 +257,20 @@
 .mypage-match-card__header {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .mypage-match-card__title {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: #111827;
 }
 
 .mypage-match-card__emoji {
-  font-size: 24px;
+  font-size: 22px;
 }
 
 .mypage-match-card__meta {
@@ -219,13 +278,13 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 8px;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
   color: #6b7280;
 }
 
 .mypage-match-card__game {
-  font-size: 11px;
+  font-size: 10px;
   color: #1f2937;
   font-weight: 800;
   text-transform: uppercase;
@@ -269,6 +328,7 @@
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 20;
   height: 72px;
   background: white;
   display: flex;
