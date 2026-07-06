@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom";
+﻿import { useNavigate } from "react-router-dom";
+import justLogo from "../assets/justlogo.png";
 import lolImg from "../assets/squareset/lolsquare.png";
 import valorantImg from "../assets/squareset/valorantsquare.png";
 import overwatchImg from "../assets/squareset/overwatchsquare.png";
@@ -26,25 +27,65 @@ const games = [
     image: pubgImg,
   },
 ];
+
 function Home() {
   const navigate = useNavigate();
 
   return (
     <main className="content" style={{ padding: "20px" }}>
-      <h2
+      <header
         style={{
-          fontSize: "22px",
-          fontWeight: 800,
-          margin: "8px 0 24px",
-          lineHeight: "1.4",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "flex-start",
+          marginBottom: "18px",
         }}
       >
-        오늘은 어떤 게임을
-        <br />
-        함께할까요?
-      </h2>
+        <div style={{ display: "flex", alignItems: "center", gap: "0px" }}>
+          <img
+            src={justLogo}
+            alt="GameLink 로고"
+            style={{
+              marginLeft: "-20px",
+              width: "100px",
+              height: "100px",
+              objectFit: "contain",
+            }}
+          />
+          <h1
+            style={{
+              marginLeft: "-20px",
+              fontSize: "30px",
+              fontWeight: 800,
+              lineHeight: 1,
+            }}
+          >
+            <span style={{ color: "#111827" }}>Game</span>
+            <span
+              style={{
+                background: "linear-gradient(90deg, #6b5cff 0%, #ff6bd6 100%)",
+                WebkitBackgroundClip: "text",
+                backgroundClip: "text",
+                color: "transparent",
+              }}
+            >
+              Link
+            </span>
+          </h1>
+        </div>
 
-      <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+        <p style={{ margin: "12px 10px 0", fontSize: "24px", fontWeight: 700 }}>
+          오늘은 무슨 게임을 하실건가요?
+        </p>
+      </header>
+
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+          gap: "14px",
+        }}
+      >
         {games.map((game) => (
           <button
             key={game.name}
@@ -52,17 +93,17 @@ function Home() {
             type="button"
             onClick={() => navigate("/match-setting")}
             style={{
-              width: "140px",
-              height: "140px", // 이미지 높이 고정
+              width: "100%",
+              aspectRatio: "1 / 1",
               position: "relative",
               borderRadius: "16px",
-              overflow: "hidden", // 이미지가 테두리를 벗어나지 않게
+              overflow: "hidden",
               border: "none",
               padding: 0,
               cursor: "pointer",
+              marginBottom: 0,
             }}
           >
-            {/* 배경 이미지 */}
             <div
               style={{
                 width: "100%",
@@ -77,7 +118,6 @@ function Home() {
               }}
             />
 
-            {/* 어두운 그라데이션 오버레이 (텍스트 가독성 확보) */}
             <div
               style={{
                 position: "absolute",
@@ -85,12 +125,12 @@ function Home() {
                 left: 0,
                 width: "100%",
                 height: "100%",
-                background: "linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.6))",
+                background:
+                  "linear-gradient(rgba(0,0,0,0.08), rgba(0,0,0,0.65))",
                 zIndex: 2,
               }}
             />
 
-            {/* 카드 내부 텍스트 */}
             <div
               style={{
                 position: "relative",
@@ -99,25 +139,34 @@ function Home() {
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
-                padding: "16px",
+                padding: "14px",
                 textAlign: "left",
               }}
             >
-              {/* 플레이 중 배지 */}
-              <div>
-                <span
-                  style={{
-                    fontSize: "10px",
-                    color: "white",
-                    backgroundColor: "rgba(0,0,0,0.5)",
-                    padding: "4px 8px",
-                    borderRadius: "8px",
-                    backdropFilter: "blur(4px)",
-                  }}
-                >
-                  {game.players}
-                </span>
-              </div>
+              <span
+                style={{
+                  alignSelf: "flex-start",
+                  fontSize: "10px",
+                  color: "white",
+                  backgroundColor: "rgba(0,0,0,0.5)",
+                  padding: "4px 8px",
+                  borderRadius: "8px",
+                  backdropFilter: "blur(4px)",
+                }}
+              >
+                {game.players}
+              </span>
+              <span
+                style={{
+                  color: "white",
+                  fontSize: "15px",
+                  fontWeight: 800,
+                  textShadow: "0 1px 8px rgba(0,0,0,0.35)",
+                  marginBottom: "20px",
+                }}
+              >
+                {game.name}
+              </span>
             </div>
           </button>
         ))}

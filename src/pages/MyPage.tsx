@@ -1,53 +1,71 @@
-import type { CSSProperties } from "react";
+﻿import justLogo from "../assets/justlogo.png";
+import mascot from "../assets/mascot.png";
+import background from "../assets/mypage/mypagebackground.png";
+import settingIcon from "../assets/mypage/setting.png";
+
+const matchCards = [
+  { result: "승리", emoji: "🏆", time: "32분 전", bg: "#b7cff4" },
+  { result: "패배", emoji: "", time: "1시간 전", bg: "#f3b9bb" },
+  { result: "승리", emoji: "🏆", time: "1시간 32분 전", bg: "linear-gradient(180deg, #cfd8e8 0%, #9fb0ca 100%)" },
+  { result: "패배", emoji: "", time: "2시간 전", bg: "#f3b9bb" },
+  { result: "승리", emoji: "🏆", time: "3시간 전", bg: "#b7cff4" },
+];
 
 function MyPage() {
   return (
-    <main className="content">
-      <section style={{ textAlign: "center", marginBottom: "30px" }}>
-        <div
-          style={{
-            width: "80px",
-            height: "80px",
-            background: "#EAECF0",
-            borderRadius: "50%",
-            margin: "0 auto 12px",
-          }}
-        />
-        <h2 style={{ margin: 0 }}>하늘</h2>
-        <p style={{ color: "#667085", fontSize: "14px" }}>물리학과 | ★ 4.5</p>
-        <div style={{ marginTop: "8px" }}>
-          <span style={tagStyle}>#친절해요</span>
-          <span style={tagStyle}>#즐겜러</span>
+    <main className="content mypage-page">
+      <section className="mypage-brand-row">
+        <div className="mypage-brand-mark">
+          <img src={justLogo} alt="GameLink 로고" className="mypage-brand-mark__img" />
         </div>
+        <h1 className="mypage-brand-title">
+          <span className="mypage-brand-title__game">Game</span>
+          <span className="mypage-brand-title__link">Match</span>
+        </h1>
       </section>
 
-      <h3>최근 활동</h3>
-      {["승리", "패배", "승리"].map((result, index) => (
-        <article
-          key={result + "-" + index}
-          className="card"
-          style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}
-        >
-          <div>
-            <div style={{ fontWeight: 800, color: result === "승리" ? "#1570EF" : "#D92D20" }}>
-              {result}
-            </div>
-            <div style={{ fontSize: "12px", color: "#98A2B3" }}>{index + 1}시간 전</div>
+      <section className="mypage-hero">
+        <img src={background} alt="" className="mypage-hero__bg" />
+        <img src={mascot} alt="" className="mypage-hero__mascot" />
+        <button type="button" className="mypage-hero__setting" aria-label="설정">
+          <img src={settingIcon} alt="" className="mypage-hero__setting-icon" />
+        </button>
+
+        <div className="mypage-profile">
+          <div className="mypage-profile__avatar">👤</div>
+          <h2 className="mypage-profile__name">닉네임</h2>
+          <p className="mypage-profile__meta">
+            물리학과 <span className="mypage-profile__star">★</span> 4.5
+          </p>
+          <div className="mypage-tags">
+            <span className="mypage-tag">#빡겜러</span>
+            <span className="mypage-tag">#즐겜러</span>
           </div>
-          <span>LOL</span>
-        </article>
-      ))}
+        </div>
+
+        <section className="mypage-matches" aria-label="최근 전적">
+          {matchCards.map((card) => (
+            <article
+              key={card.result + card.time}
+              className="mypage-match-card"
+              style={{ background: card.bg }}
+            >
+              <div className="mypage-match-card__header">
+                <div className="mypage-match-card__title">
+                  <span>{card.result}</span>
+                  {card.emoji ? <span className="mypage-match-card__emoji">{card.emoji}</span> : null}
+                </div>
+                <div className="mypage-match-card__meta">
+                  <span>{card.time}</span>
+                  <span className="mypage-match-card__game">리그오브레전드</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </section>
+      </section>
     </main>
   );
 }
-
-const tagStyle: CSSProperties = {
-  display: "inline-block",
-  padding: "4px 8px",
-  background: "#F2F4F7",
-  borderRadius: "6px",
-  fontSize: "12px",
-  marginRight: "4px",
-};
 
 export default MyPage;

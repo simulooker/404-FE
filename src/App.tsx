@@ -1,5 +1,6 @@
-import { HashRouter, Route, Routes } from "react-router-dom";
+﻿import { HashRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
+import GameChoice from "./pages/GameChoice";
 import GameResult from "./pages/GameResult";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -13,9 +14,10 @@ function App() {
   return (
     <HashRouter>
       <Routes>
-        <Route element={<Layout />}>
+        <Route element={<Layout />}> 
           <Route path="/" element={<Login />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/game-choice" element={<GameChoice />} />
           <Route path="/match-setting" element={<MatchSetting />} />
           <Route path="/matching" element={<Matching />} />
           <Route path="/match-done" element={<MatchDone />} />
