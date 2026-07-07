@@ -1,46 +1,52 @@
 import { useNavigate } from "react-router-dom";
+import justLogo from "../assets/justlogo.png";
+import mascot from "../assets/mascot.png";
+import mascotRound from "../assets/mascotround.png";
 
 function Matching() {
   const navigate = useNavigate();
 
   return (
-    <main className="content" style={{ textAlign: "center", paddingTop: "50px" }}>
-      <h2 style={{ color: "#7F56D9" }}>매칭 중...</h2>
-      <p style={{ color: "#667085", lineHeight: 1.6 }}>
-        실력과 성향을 분석해서
-        <br />
-        잘 맞는 팀원을 찾고 있어요
-      </p>
-
-      <div
-        style={{
-          margin: "56px auto",
-          width: "150px",
-          height: "150px",
-          background: "#F4EBFF",
-          borderRadius: "50%",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontSize: "48px",
-        }}
-      >
-        🎮
-      </div>
-
-      <div style={{ marginBottom: "32px" }}>
-        <p style={{ fontSize: "24px", fontWeight: 800, margin: 0 }}>00:05</p>
-        <p style={{ color: "#98A2B3", fontSize: "14px" }}>예상 대기 시간 0:23</p>
-      </div>
-
-      <button className="gradient-btn" type="button" onClick={() => navigate("/match-done")}>
-        데모 매칭 완료
-      </button>
+    <main className="content matching-page">
       <button
-        className="secondary-btn"
+        className="matching-temp-button"
+        type="button"
+        onClick={() => navigate("/matched")}
+      >
+        임시
+      </button>
+
+      <header className="matching-brand">
+        <img src={justLogo} alt="GameLink 로고" className="matching-brand__logo" />
+        <h1 className="matching-brand__title">
+          <span className="matching-brand__game">Game</span>
+          <span className="matching-brand__link">Link</span>
+        </h1>
+      </header>
+
+      <section className="matching-copy">
+        <h2>매칭 중..</h2>
+        <p>
+          실력과 성향을 분석하여
+          <br />
+          적합한 상대를 찾고 있어요
+        </p>
+      </section>
+
+      <section className="matching-visual" aria-label="매칭 진행 중">
+        <img src={mascotRound} alt="" className="matching-visual__round" />
+        <img src={mascot} alt="" className="matching-visual__mascot" />
+      </section>
+
+      <section className="matching-time">
+        <p className="matching-time__current">00:05</p>
+        <p className="matching-time__expected">예상 대기 시간 0:23</p>
+      </section>
+
+      <button
+        className="gradient-btn matching-exit"
         type="button"
         onClick={() => navigate("/home")}
-        style={{ marginTop: "12px", width: "100%" }}
       >
         대기열 나가기
       </button>

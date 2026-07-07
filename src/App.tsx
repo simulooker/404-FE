@@ -1,10 +1,12 @@
 ﻿import { HashRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
+import CreateID from "./pages/createID";
 import GameChoice from "./pages/GameChoice";
 import GameResult from "./pages/GameResult";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
 import MatchDone from "./pages/MatchDone";
+import Matched from "./pages/matched";
 import Matching from "./pages/Matching";
 import MatchSetting from "./pages/MatchSetting";
 import MyPage from "./pages/MyPage";
@@ -16,10 +18,12 @@ function App() {
       <Routes>
         <Route element={<Layout />}> 
           <Route path="/" element={<Login />} />
+          <Route path="/create-id" element={<CreateID />} />
           <Route path="/home" element={<Home />} />
           <Route path="/game-choice" element={<GameChoice />} />
           <Route path="/match-setting" element={<MatchSetting />} />
           <Route path="/matching" element={<Matching />} />
+          <Route path="/matched" element={<Matched />} />
           <Route path="/match-done" element={<MatchDone />} />
           <Route path="/game-result" element={<GameResult />} />
           <Route path="/mypage" element={<MyPage />} />

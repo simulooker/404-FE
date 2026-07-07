@@ -3,12 +3,14 @@ import leagueImg from "../assets/gamechoice/leagueoflegends.png";
 import valorantImg from "../assets/gamechoice/valorant.png";
 import overwatchImg from "../assets/gamechoice/overwatch.png";
 import battlegroundImg from "../assets/gamechoice/battleground.png";
+import fifaImg from "../assets/gamechoice/fifa.png";
 
 const games = [
   { name: "LEAGUE OF LEGENDS", image: leagueImg },
   { name: "VALORANT", image: valorantImg },
   { name: "OVERWATCH", image: overwatchImg },
   { name: "PUBG", image: battlegroundImg },
+  { name: "FIFA", image: fifaImg },
 ];
 
 function GameChoice() {

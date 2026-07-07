@@ -87,7 +87,13 @@ function Login() {
           로그인
         </button>
 
-        <p style={helperTextStyle}>전남대 이메일 인증하기</p>
+        <button
+          type="button"
+          style={helperTextStyle}
+          onClick={() => navigate("/create-id")}
+        >
+          전남대 이메일 인증하기
+        </button>
       </section>
     </main>
   );
@@ -141,6 +147,10 @@ const helperTextStyle: CSSProperties = {
   marginTop: "18px",
   fontSize: "12px",
   color: "#98A2B3",
+  border: "none",
+  backgroundColor: "transparent",
+  cursor: "pointer",
+  padding: 0,
 };
 
 export default Login;

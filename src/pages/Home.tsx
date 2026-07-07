@@ -4,6 +4,7 @@ import lolImg from "../assets/squareset/lolsquare.png";
 import valorantImg from "../assets/squareset/valorantsquare.png";
 import overwatchImg from "../assets/squareset/overwatchsquare.png";
 import pubgImg from "../assets/squareset/pubgsquare.png";
+import fifaImg from "../assets/squareset/fifasquare.png";
 
 const games = [
   {
@@ -25,6 +26,11 @@ const games = [
     name: "PUBG",
     players: "800명 플레이 중",
     image: pubgImg,
+  },
+  {
+    name: "FIFA",
+    players: "600명 플레이 중",
+    image: fifaImg,
   },
 ];
 
@@ -86,7 +92,10 @@ function Home() {
           gap: "14px",
         }}
       >
-        {games.map((game) => (
+        {games.map((game) => {
+          const isCenteredCard = game.name === "FIFA";
+
+          return (
           <button
             key={game.name}
             className="card"
@@ -102,6 +111,9 @@ function Home() {
               padding: 0,
               cursor: "pointer",
               marginBottom: 0,
+              gridColumn: isCenteredCard ? "1 / -1" : undefined,
+              justifySelf: isCenteredCard ? "center" : undefined,
+              maxWidth: isCenteredCard ? "calc((100% - 14px) / 2)" : undefined,
             }}
           >
             <div
@@ -110,7 +122,7 @@ function Home() {
                 height: "100%",
                 backgroundImage: `url(${game.image})`,
                 backgroundSize: "cover",
-                backgroundPosition: "center",
+                backgroundPosition: isCenteredCard ? "center top" : "center",
                 position: "absolute",
                 top: 0,
                 left: 0,
@@ -145,7 +157,8 @@ function Home() {
             >
               <span
                 style={{
-                  alignSelf: "flex-start",
+                  alignSelf: "flex-end",
+                  textAlign: "right",
                   fontSize: "10px",
                   color: "white",
                   backgroundColor: "rgba(0,0,0,0.5)",
@@ -169,7 +182,8 @@ function Home() {
               </span>
             </div>
           </button>
-        ))}
+          );
+        })}
       </div>
     </main>
   );
