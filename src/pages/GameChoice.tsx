@@ -26,21 +26,19 @@ function GameChoice() {
         </p>
       </section>
 
-      <div className="gamechoice-scroll">
-        <section className="gamechoice-list" aria-label="게임 선택">
-          {games.map((game) => (
-            <button
-              key={game.name}
-              type="button"
-              className="gamechoice-card"
-              onClick={() => navigate("/match-setting")}
-              aria-label={game.name}
-            >
-              <img src={game.image} alt="" className="gamechoice-image" />
-            </button>
-          ))}
-        </section>
-      </div>
+      <section className="gamechoice-list" aria-label="게임 선택">
+        {games.map((game) => (
+          <button
+            key={game.name}
+            type="button"
+            className="gamechoice-card"
+            onClick={() => navigate("/match-setting")}
+            aria-label={game.name}
+          >
+            <img src={game.image} alt="" className="gamechoice-image" />
+          </button>
+        ))}
+      </section>
 
       <button
         type="button"

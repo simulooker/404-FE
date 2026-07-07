@@ -38,9 +38,8 @@ function Home() {
   const navigate = useNavigate();
 
   return (
-    <main className="content home-page">
+    <main className="content" style={{ padding: "20px" }}>
       <header
-        className="home-header"
         style={{
           display: "flex",
           flexDirection: "column",
@@ -86,7 +85,6 @@ function Home() {
         </p>
       </header>
 
-      <section className="home-games-scroll" aria-label="게임 선택">
       <div
         style={{
           display: "grid",
@@ -187,7 +185,6 @@ function Home() {
           );
         })}
       </div>
-      </section>
     </main>
   );
 }

@@ -30,8 +30,7 @@ function MatchSetting() {
         <div className="match-setting-divider" />
       </header>
 
-      <div className="match-setting-scroll">
-        <section className="match-setting-section">
+      <section className="match-setting-section">
           <p className="match-setting-label">티어 범위 설정</p>
           <div className="match-setting-tier-row">
             <select
@@ -62,9 +61,9 @@ function MatchSetting() {
               ))}
             </select>
           </div>
-        </section>
+      </section>
 
-        <section className="match-setting-section match-setting-section--people">
+      <section className="match-setting-section match-setting-section--people">
           <p className="match-setting-label">
             매칭 인원 선택 <span className="match-setting-required">*</span>
           </p>
@@ -84,9 +83,9 @@ function MatchSetting() {
             </select>
             <span className="match-setting-unit">명</span>
           </div>
-        </section>
+      </section>
 
-        <section className="match-setting-section match-setting-section--wait">
+      <section className="match-setting-section match-setting-section--wait">
           <p className="match-setting-label">
             대기 허용 시간 <span className="match-setting-required">*</span>
           </p>
@@ -103,9 +102,9 @@ function MatchSetting() {
             />
             <span className="match-setting-wait-value">{waitTime}분</span>
           </div>
-        </section>
+      </section>
 
-        <section className="match-setting-section match-setting-section--position">
+      <section className="match-setting-section match-setting-section--position">
           <p className="match-setting-label">포지션 선택</p>
           <div className="match-setting-position-row">
             {positions.map((item) => (
@@ -120,16 +119,15 @@ function MatchSetting() {
               </button>
             ))}
           </div>
-        </section>
+      </section>
 
-        <button
-          className="gradient-btn match-setting-submit"
-          type="button"
-          onClick={() => navigate("/matching")}
-        >
-          완료
-        </button>
-      </div>
+      <button
+        className="gradient-btn match-setting-submit"
+        type="button"
+        onClick={() => navigate("/matching")}
+      >
+        완료
+      </button>
     </main>
   );
 }

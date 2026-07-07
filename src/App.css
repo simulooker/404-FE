@@ -30,32 +30,6 @@
   overflow-y: auto;
 }
 
-.home-page {
-  height: 100dvh;
-  padding: 20px 20px calc(var(--bottom-nav-height) + 14px);
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.home-header {
-  flex: 0 0 auto;
-}
-
-.home-games-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding-bottom: 12px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.home-games-scroll::-webkit-scrollbar {
-  display: none;
-}
-
 .mypage-page {
   height: calc(100dvh - var(--bottom-nav-height));
   padding-top: 12px;
@@ -117,17 +91,11 @@
 }
 
 .gamechoice-page {
-  height: 100dvh;
-  padding: 60px 20px calc(var(--bottom-nav-height) + 14px);
-  box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
+  padding-top: 60px;
 }
 
 .gamechoice-header {
   margin-bottom: 18px;
-  flex: 0 0 auto;
 }
 
 .gamechoice-title {
@@ -160,19 +128,6 @@
   gap: 9px;
 }
 
-.gamechoice-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  padding-bottom: 12px;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.gamechoice-scroll::-webkit-scrollbar {
-  display: none;
-}
-
 .gamechoice-card {
   width: 100%;
   height: 91px;
@@ -203,7 +158,6 @@
 .gamechoice-next {
   margin-top: 20px;
   margin-left: auto;
-  flex: 0 0 auto;
   display: block;
   border: 0;
   outline: 0;
@@ -225,30 +179,14 @@
   font-family:
     "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Segoe UI",
     sans-serif;
-  height: 100dvh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
-  overflow: hidden;
 }
 
 .match-setting-header {
   margin-bottom: 28px;
-  flex: 0 0 auto;
-}
-
-.match-setting-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-.match-setting-scroll::-webkit-scrollbar {
-  display: none;
 }
 
 .match-setting-title {
