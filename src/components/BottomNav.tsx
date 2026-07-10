@@ -8,7 +8,13 @@ import myPageButtonActive from "../assets/navigationbar/mypagebuttonactive.png";
 function BottomNav() {
   const location = useLocation();
 
-  if (location.pathname === "/" || location.pathname === "/matching" || location.pathname === "/matched") {
+  if (
+    location.pathname === "/" ||
+    location.pathname === "/create-id" ||
+    location.pathname === "/matching" ||
+    location.pathname === "/matched" ||
+    location.pathname === "/game-result"
+  ) {
     return null;
   }
 

@@ -1,4 +1,5 @@
 ﻿import justLogo from "../assets/justlogo.png";
+import { useNavigate } from "react-router-dom";
 import mascot from "../assets/mascot.png";
 import background from "../assets/mypage/mypagebackground.png";
 import profile from "../assets/mypage/profile.png";
@@ -13,6 +14,8 @@ const matchCards = [
 ];
 
 function MyPage() {
+  const navigate = useNavigate();
+
   return (
     <main className="content mypage-page">
       <section className="mypage-brand-row">
@@ -38,7 +41,12 @@ function MyPage() {
 
         <section className="mypage-hero">
           <img src={background} alt="" className="mypage-hero__bg" />
-          <button type="button" className="mypage-hero__setting" aria-label="설정">
+          <button
+            type="button"
+            className="mypage-hero__setting"
+            aria-label="설정"
+            onClick={() => navigate("/settings")}
+          >
             <img src={settingIcon} alt="" className="mypage-hero__setting-icon" />
           </button>
 

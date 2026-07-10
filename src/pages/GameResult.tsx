@@ -1,89 +1,91 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import justLogo from "../assets/justlogo.png";
+import trophy from "../assets/trophy.png";
+import bg1 from "../assets/profile/background/basic1.png";
+import bg2 from "../assets/profile/background/basic2.png";
+import bg3 from "../assets/profile/background/basic3.png";
+import bg4 from "../assets/profile/background/basic4.png";
+import profile1 from "../assets/profile/roundprofile/basic1.png";
+import profile2 from "../assets/profile/roundprofile/basic2.png";
+import profile3 from "../assets/profile/roundprofile/basic3.png";
+import profile4 from "../assets/profile/roundprofile/basic4.png";
 
-const team = ["하늘", "민준", "서연", "지호"];
+const teammates = [
+  { id: "user-1", name: "닉네임", bg: bg1, profile: profile1 },
+  { id: "user-2", name: "닉네임", bg: bg2, profile: profile2 },
+  { id: "user-3", name: "닉네임", bg: bg3, profile: profile3 },
+  { id: "user-4", name: "닉네임", bg: bg4, profile: profile4 },
+];
 
 function GameResult() {
   const navigate = useNavigate();
-  const [ratings, setRatings] = useState([0, 0, 0, 0]);
+  const [ratings, setRatings] = useState<Record<string, number>>({});
 
-  const handleRating = (memberIndex: number, starIndex: number) => {
-    const nextRatings = [...ratings];
-    nextRatings[memberIndex] = starIndex + 1;
-    setRatings(nextRatings);
+  const handleRating = (memberId: string, rating: number) => {
+    setRatings((current) => ({ ...current, [memberId]: rating }));
   };
 
   return (
-    <main className="content">
-      <header style={{ textAlign: "center", padding: "10px 0" }}>
-        <span style={{ fontWeight: 800, color: "#7F56D9" }}>GameLink</span>
-      </header>
+    <main className="content game-result-page">
+      <section className="game-result-brand">
+        <div className="game-result-brand__mark">
+          <img src={justLogo} alt="GameLink 로고" />
+        </div>
+        <h1 className="game-result-brand__title">
+          <span>Game</span>
+          <strong>Match</strong>
+        </h1>
+      </section>
 
-      <section style={{ textAlign: "center", margin: "20px 0" }}>
-        <h2 style={{ margin: 0 }}>게임 완료</h2>
-        <p style={{ color: "#667085", fontSize: "14px" }}>
-          함께한 팀원에게 별점을 남겨주세요
+      <section className="game-result-heading">
+        <h2>게임 완료</h2>
+        <p>
+          게임이 완료 되었습니다
+          <br />
+          별점을 선택해주세요
         </p>
       </section>
 
-      <section
-        style={{
-          background: "linear-gradient(135deg, #2970FF 0%, #004EEB 100%)",
-          borderRadius: "16px",
-          padding: "30px",
-          textAlign: "center",
-          color: "white",
-          marginBottom: "24px",
-        }}
-      >
-        <div style={{ fontSize: "40px", marginBottom: "8px" }}>🏆</div>
-        <h3 style={{ margin: 0, fontSize: "24px" }}>승리 5:3</h3>
+      <section className="game-result-score" aria-label="게임 결과">
+        <img src={trophy} alt="" className="game-result-score__trophy" />
+        <div>
+          <strong>승리</strong>
+          <span>5:3</span>
+        </div>
       </section>
 
-      <section>
-        {team.map((name, memberIndex) => (
-          <article
-            key={name}
-            className="card"
-            style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "12px" }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div
-                style={{
-                  width: "40px",
-                  height: "40px",
-                  background: "#EAECF0",
-                  borderRadius: "50%",
-                }}
-              />
-              <span style={{ fontWeight: 700 }}>{name}</span>
-            </div>
-            <div style={{ display: "flex", gap: "3px" }} aria-label={name + " 별점"}>
-              {[0, 1, 2, 3, 4].map((starIndex) => (
-                <button
-                  key={starIndex}
-                  type="button"
-                  onClick={() => handleRating(memberIndex, starIndex)}
-                  aria-label={String(starIndex + 1) + "점"}
-                  style={{
-                    border: 0,
-                    background: "transparent",
-                    cursor: "pointer",
-                    fontSize: "18px",
-                    color: starIndex < ratings[memberIndex] ? "#FDB022" : "#D0D5DD",
-                    padding: "2px",
-                  }}
-                >
-                  {starIndex < ratings[memberIndex] ? "★" : "☆"}
-                </button>
-              ))}
-            </div>
-          </article>
-        ))}
+      <section className="game-result-ratings" aria-label="팀원 별점">
+        {teammates.map((member) => {
+          const rating = ratings[member.id] ?? 0;
+
+          return (
+            <article className="game-result-card" key={member.id}>
+              <img src={member.bg} alt="" className="game-result-card__bg" />
+              <div className="game-result-card__shade" />
+              <img src={member.profile} alt="" className="game-result-card__profile" />
+              <strong className="game-result-card__name">{member.name}</strong>
+              <div className="game-result-stars" aria-label={`${member.name} 별점`}>
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <button
+                    key={star}
+                    type="button"
+                    className="game-result-star"
+                    aria-label={`${star}점`}
+                    aria-pressed={star <= rating}
+                    onClick={() => handleRating(member.id, star)}
+                  >
+                    {star <= rating ? "★" : "☆"}
+                  </button>
+                ))}
+              </div>
+            </article>
+          );
+        })}
       </section>
 
-      <button className="gradient-btn" type="button" onClick={() => navigate("/home")}>
-        홈으로 돌아가기
+      <button className="gradient-btn game-result-exit" type="button" onClick={() => navigate("/home")}>
+        나가기
       </button>
     </main>
   );

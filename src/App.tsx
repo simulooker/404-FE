@@ -10,6 +10,7 @@ import Matched from "./pages/matched";
 import Matching from "./pages/Matching";
 import MatchSetting from "./pages/MatchSetting";
 import MyPage from "./pages/MyPage";
+import Settings from "./pages/Settings";
 import "./App.css";
 
 function App() {
@@ -27,6 +28,7 @@ function App() {
           <Route path="/match-done" element={<MatchDone />} />
           <Route path="/game-result" element={<GameResult />} />
           <Route path="/mypage" element={<MyPage />} />
+          <Route path="/settings" element={<Settings />} />
         </Route>
       </Routes>
     </HashRouter>

@@ -1,16 +1,16 @@
 import type { CSSProperties } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/justlogo.png";
+import logo from "../assets/mascot.png";
 
 function CreateID() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [nickname, setNickname] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = () => {
-    if (!email.trim() || !nickname.trim()) {
-      alert("전남대 이메일과 닉네임을 입력해주세요.");
+    if (!email.trim() || !password.trim()) {
+      alert("전남대 이메일과 비밀번호를 입력해주세요.");
       return;
     }
 
@@ -25,7 +25,7 @@ function CreateID() {
         </button>
 
         <div style={brandStyle}>
-          <img src={logo} alt="GameLink 로고" style={logoStyle} />
+          <img src={logo} alt="GameLink 마스코트" style={logoStyle} />
           <h1 style={titleStyle}>아이디 만들기</h1>
           <p style={descriptionStyle}>전남대 이메일로 인증하고 GameLink를 시작해보세요.</p>
         </div>
@@ -39,10 +39,10 @@ function CreateID() {
             style={inputStyle}
           />
           <input
-            type="text"
-            placeholder="닉네임"
-            value={nickname}
-            onChange={(event) => setNickname(event.target.value)}
+            type="password"
+            placeholder="비밀번호"
+            value={password}
+            onChange={(event) => setPassword(event.target.value)}
             style={inputStyle}
           />
 
@@ -62,9 +62,9 @@ function CreateID() {
 const pageStyle: CSSProperties = {
   minHeight: "100vh",
   display: "flex",
-  alignItems: "center",
+  alignItems: "flex-start",
   justifyContent: "center",
-  padding: "32px 24px",
+  padding: "10px 24px 32px",
   backgroundColor: "#FFFFFF",
 };
 
@@ -84,18 +84,18 @@ const backButtonStyle: CSSProperties = {
   lineHeight: 1,
   cursor: "pointer",
   padding: 0,
-  marginBottom: "42px",
+  marginBottom: "4px",
 };
 
 const brandStyle: CSSProperties = {
   textAlign: "center",
-  marginBottom: "34px",
+  marginBottom: "24px",
 };
 
 const logoStyle: CSSProperties = {
-  width: "86px",
+  width: "258px",
   height: "auto",
-  marginBottom: "18px",
+  marginBottom: "-8px",
 };
 
 const titleStyle: CSSProperties = {
@@ -106,7 +106,7 @@ const titleStyle: CSSProperties = {
 };
 
 const descriptionStyle: CSSProperties = {
-  margin: "10px 0 0",
+  margin: "8px 0 0",
   fontSize: "14px",
   color: "#667085",
   lineHeight: 1.5,
@@ -128,6 +128,7 @@ const inputStyle: CSSProperties = {
   outline: "none",
   color: "#111827",
   backgroundColor: "#FFFFFF",
+  boxSizing: "border-box",
 };
 
 const loginButtonStyle: CSSProperties = {

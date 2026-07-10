@@ -35,7 +35,7 @@ function Matching() {
 
       <section className="matching-visual" aria-label="매칭 진행 중">
         <img src={mascotRound} alt="" className="matching-visual__round" />
-        <img src={mascot} alt="" className="matching-visual__mascot" />
+        <img src={mascot} alt="GameLink 마스코트" className="matching-visual__mascot" />
       </section>
 
       <section className="matching-time">

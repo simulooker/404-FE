@@ -120,9 +120,9 @@ const logoStyle: CSSProperties = {
 
 const taglineStyle: CSSProperties = {
   color: "#667085",
-  fontSize: "12px",
+  fontSize: "11px",
   lineHeight: 1.4,
-  margin: "-105px 0 0",
+  margin: "-96px 0 0",
   position: "relative",
   zIndex: 1,
 };
