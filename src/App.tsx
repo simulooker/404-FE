@@ -2,6 +2,7 @@
 import Layout from "./components/Layout";
 import CreateID from "./pages/createID";
 import GameChoice from "./pages/GameChoice";
+import GameResultFade from "./pages/gameresultfade";
 import GameResult from "./pages/GameResult";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -26,6 +27,7 @@ function App() {
           <Route path="/matching" element={<Matching />} />
           <Route path="/matched" element={<Matched />} />
           <Route path="/match-done" element={<MatchDone />} />
+          <Route path="/game-result-fade" element={<GameResultFade />} />
           <Route path="/game-result" element={<GameResult />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/settings" element={<Settings />} />

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 const partySizes = [1, 2, 3, 4, 5];
 const tiers = [
@@ -41,6 +41,8 @@ type OpenTier = "min" | "max" | null;
 
 function MatchSetting() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedGame = searchParams.get("game") || "valorant";
   const [minTier, setMinTier] = useState("Gold III");
   const [maxTier, setMaxTier] = useState("Gold I");
   const [openTier, setOpenTier] = useState<OpenTier>(null);
@@ -168,7 +170,7 @@ function MatchSetting() {
       <button
         className="gradient-btn match-setting-submit"
         type="button"
-        onClick={() => navigate("/matching")}
+        onClick={() => navigate(`/matching?game=${selectedGame}`)}
       >
         완료
       </button>

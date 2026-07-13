@@ -3,6 +3,12 @@ import { useNavigate } from "react-router-dom";
 function Settings() {
   const navigate = useNavigate();
 
+  const handleLogout = () => {
+    localStorage.removeItem("userToken");
+    sessionStorage.clear();
+    navigate("/", { replace: true });
+  };
+
   return (
     <main className="content settings-page">
       <header className="settings-header">
@@ -25,7 +31,7 @@ function Settings() {
           <span>디스코드 연결</span>
           <strong>›</strong>
         </button>
-        <button type="button" className="settings-item">
+        <button type="button" className="settings-item" onClick={handleLogout}>
           <span>로그아웃</span>
           <strong>›</strong>
         </button>

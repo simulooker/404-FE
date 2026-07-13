@@ -6,11 +6,11 @@ import battlegroundImg from "../assets/gamechoice/battleground.png";
 import fifaImg from "../assets/gamechoice/fifa.png";
 
 const games = [
-  { name: "LEAGUE OF LEGENDS", image: leagueImg },
-  { name: "VALORANT", image: valorantImg },
-  { name: "OVERWATCH", image: overwatchImg },
-  { name: "PUBG", image: battlegroundImg },
-  { name: "FIFA", image: fifaImg },
+  { id: "leagueoflegends", name: "LEAGUE OF LEGENDS", image: leagueImg },
+  { id: "valorant", name: "VALORANT", image: valorantImg },
+  { id: "overwatch", name: "OVERWATCH", image: overwatchImg },
+  { id: "battleground", name: "PUBG", image: battlegroundImg },
+  { id: "fifa", name: "FIFA", image: fifaImg },
 ];
 
 function GameChoice() {
@@ -32,7 +32,7 @@ function GameChoice() {
             key={game.name}
             type="button"
             className="gamechoice-card"
-            onClick={() => navigate("/match-setting")}
+            onClick={() => navigate(`/match-setting?game=${game.id}`)}
             aria-label={game.name}
           >
             <img src={game.image} alt="" className="gamechoice-image" />
@@ -43,7 +43,7 @@ function GameChoice() {
       <button
         type="button"
         className="gamechoice-next"
-        onClick={() => navigate("/match-setting")}
+        onClick={() => navigate("/match-setting?game=leagueoflegends")}
         aria-label="다음"
       >
         →

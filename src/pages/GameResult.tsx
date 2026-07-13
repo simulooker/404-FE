@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import justLogo from "../assets/justlogo.png";
 import trophy from "../assets/trophy.png";
 import bg1 from "../assets/profile/background/basic1.png";
@@ -20,6 +20,8 @@ const teammates = [
 
 function GameResult() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const result = searchParams.get("result") === "lose" ? "lose" : "win";
   const [ratings, setRatings] = useState<Record<string, number>>({});
 
   const handleRating = (memberId: string, rating: number) => {
@@ -30,7 +32,7 @@ function GameResult() {
     <main className="content game-result-page">
       <section className="game-result-brand">
         <div className="game-result-brand__mark">
-          <img src={justLogo} alt="GameLink 로고" />
+          <img src={justLogo} alt="GameMatch 로고" />
         </div>
         <h1 className="game-result-brand__title">
           <span>Game</span>
@@ -47,10 +49,10 @@ function GameResult() {
         </p>
       </section>
 
-      <section className="game-result-score" aria-label="게임 결과">
+      <section className={`game-result-score game-result-score--${result}`} aria-label="게임 결과">
         <img src={trophy} alt="" className="game-result-score__trophy" />
         <div>
-          <strong>승리</strong>
+          <strong>{result === "win" ? "승리" : "패배"}</strong>
           <span>5:3</span>
         </div>
       </section>

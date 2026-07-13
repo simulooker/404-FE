@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import discordIcon from "../assets/matched/discord.png";
 import micIcon from "../assets/matched/mic.png";
 import micOffIcon from "../assets/matched/micoff.png";
@@ -21,14 +21,22 @@ const members = [
   { id: "user-4", tier: "Gold III", rating: "4.6", bg: bg4, profile: profile4, mic: true, discord: false },
 ];
 
+type ResultType = "win" | "lose";
+
 function Matched() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  const selectedGame = searchParams.get("game") || "valorant";
   const [acceptedMemberIds, setAcceptedMemberIds] = useState<string[]>([]);
   const allAccepted = acceptedMemberIds.length === members.length;
 
   const handleAccept = () => {
-    // TODO: 백엔드 연결 후에는 API 응답의 수락 유저 목록으로 교체합니다.
+    // 백엔드 연결 전까지는 모든 유저가 수락한 상태를 임시로 만듭니다.
     setAcceptedMemberIds(members.map((member) => member.id));
+  };
+
+  const goToResultFade = (result: ResultType) => {
+    navigate(`/game-result-fade?game=${selectedGame}&result=${result}`);
   };
 
   return (
@@ -37,13 +45,22 @@ function Matched() {
         <div className="matched-title-row">
           <h1>{allAccepted ? "준비 완료" : "매칭 완료!"}</h1>
           {allAccepted ? (
-            <button
-              className="matched-temp-done"
-              type="button"
-              onClick={() => navigate("/game-result")}
-            >
-              임시
-            </button>
+            <div className="matched-temp-actions">
+              <button
+                className="matched-temp-done"
+                type="button"
+                onClick={() => goToResultFade("win")}
+              >
+                임시 승리
+              </button>
+              <button
+                className="matched-temp-done matched-temp-done--lose"
+                type="button"
+                onClick={() => goToResultFade("lose")}
+              >
+                임시 패배
+              </button>
+            </div>
           ) : null}
         </div>
         <p>{allAccepted ? "모든 팀원이 수락을 완료했어요" : "함께 플레이할 팀원을 찾았어요"}</p>

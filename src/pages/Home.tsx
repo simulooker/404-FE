@@ -8,26 +8,31 @@ import fifaImg from "../assets/squareset/fifasquare.png";
 
 const games = [
   {
+    id: "leagueoflegends",
     name: "LEAGUE OF LEGENDS",
     players: "1.4천 명 플레이 중",
     image: lolImg,
   },
   {
+    id: "valorant",
     name: "VALORANT",
     players: "1.1천 명 플레이 중",
     image: valorantImg,
   },
   {
+    id: "overwatch",
     name: "OVERWATCH",
     players: "800명 플레이 중",
     image: overwatchImg,
   },
   {
+    id: "battleground",
     name: "PUBG",
     players: "800명 플레이 중",
     image: pubgImg,
   },
   {
+    id: "fifa",
     name: "FIFA",
     players: "600명 플레이 중",
     image: fifaImg,
@@ -100,7 +105,7 @@ function Home() {
             key={game.name}
             className="card"
             type="button"
-            onClick={() => navigate("/match-setting")}
+            onClick={() => navigate(`/match-setting?game=${game.id}`)}
             style={{
               width: "100%",
               aspectRatio: "1 / 1",
