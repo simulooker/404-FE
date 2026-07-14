@@ -1,20 +1,53 @@
 import type { CSSProperties } from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../api/client";
 import logo from "../assets/mascot.png";
 
 function CreateID() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [nickname, setNickname] = useState("");
+  const [college, setCollege] = useState("");
+  const [department, setDepartment] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const handleSubmit = () => {
-    if (!email.trim() || !password.trim()) {
-      alert("전남대 이메일과 비밀번호를 입력해주세요.");
+  const handleSubmit = async () => {
+    if (
+      !email.trim() ||
+      !nickname.trim() ||
+      !college.trim() ||
+      !department.trim() ||
+      !password.trim()
+    ) {
+      alert("이메일, 닉네임, 단과대학, 학부(과), 비밀번호를 모두 입력해주세요.");
       return;
     }
 
-    alert("인증 메일을 보냈습니다. 메일함을 확인해주세요.");
+    if (password.length < 8) {
+      alert("비밀번호는 8자 이상 입력해주세요.");
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await api.register({
+        email: email.trim(),
+        nickname: nickname.trim(),
+        password,
+        college: college.trim(),
+        department: department.trim(),
+      });
+
+      alert("가입 요청이 완료됐어요. 이메일 인증 후 로그인해주세요.");
+      navigate("/", { replace: true });
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "아이디 만들기에 실패했습니다.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -39,6 +72,27 @@ function CreateID() {
             style={inputStyle}
           />
           <input
+            type="text"
+            placeholder="닉네임"
+            value={nickname}
+            onChange={(event) => setNickname(event.target.value)}
+            style={inputStyle}
+          />
+          <input
+            type="text"
+            placeholder="단과대학 (예: 공과대학)"
+            value={college}
+            onChange={(event) => setCollege(event.target.value)}
+            style={inputStyle}
+          />
+          <input
+            type="text"
+            placeholder="학부(과) (예: 소프트웨어공학과)"
+            value={department}
+            onChange={(event) => setDepartment(event.target.value)}
+            style={inputStyle}
+          />
+          <input
             type="password"
             placeholder="비밀번호"
             value={password}
@@ -46,8 +100,8 @@ function CreateID() {
             style={inputStyle}
           />
 
-          <button type="button" className="gradient-btn" onClick={handleSubmit}>
-            인증 메일 보내기
+          <button type="button" className="gradient-btn" onClick={handleSubmit} disabled={isLoading}>
+            {isLoading ? "가입 요청 중" : "인증 메일 보내기"}
           </button>
 
           <button type="button" style={loginButtonStyle} onClick={() => navigate("/")}>
@@ -70,7 +124,7 @@ const pageStyle: CSSProperties = {
 
 const cardStyle: CSSProperties = {
   width: "100%",
-  maxWidth: "360px",
+  maxWidth: "340px",
   position: "relative",
 };
 
@@ -89,13 +143,13 @@ const backButtonStyle: CSSProperties = {
 
 const brandStyle: CSSProperties = {
   textAlign: "center",
-  marginBottom: "24px",
+  marginBottom: "18px",
 };
 
 const logoStyle: CSSProperties = {
-  width: "258px",
+  width: "230px",
   height: "auto",
-  marginBottom: "-8px",
+  marginBottom: "-12px",
 };
 
 const titleStyle: CSSProperties = {
@@ -115,7 +169,7 @@ const descriptionStyle: CSSProperties = {
 const formStyle: CSSProperties = {
   display: "flex",
   flexDirection: "column",
-  gap: "14px",
+  gap: "12px",
 };
 
 const inputStyle: CSSProperties = {

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { api } from "../api/client";
 import justLogo from "../assets/justlogo.png";
 import mascot from "../assets/mascot.png";
 import mascotRound from "../assets/mascotround.png";
@@ -14,9 +15,29 @@ function formatElapsedTime(totalSeconds: number) {
 function Matching() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const selectedGame = searchParams.get("game") || "valorant";
+  const selectedGame = searchParams.get("game") || "leagueoflegends";
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [dotCount, setDotCount] = useState(1);
+  const [waitingCount, setWaitingCount] = useState<number | null>(null);
+
+  useEffect(() => {
+    let hasRequestedLeave = false;
+
+    const leaveQueueBeforeClose = () => {
+      if (hasRequestedLeave) return;
+
+      hasRequestedLeave = true;
+      api.leaveQueueOnPageClose();
+    };
+
+    window.addEventListener("pagehide", leaveQueueBeforeClose);
+    window.addEventListener("beforeunload", leaveQueueBeforeClose);
+
+    return () => {
+      window.removeEventListener("pagehide", leaveQueueBeforeClose);
+      window.removeEventListener("beforeunload", leaveQueueBeforeClose);
+    };
+  }, []);
 
   useEffect(() => {
     const timerId = window.setInterval(() => {
@@ -26,6 +47,48 @@ function Matching() {
 
     return () => window.clearInterval(timerId);
   }, []);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkQueueStatus = async () => {
+      try {
+        const status = await api.getQueueStatus();
+
+        if (!isMounted) return;
+
+        setWaitingCount(status.waiting_count);
+
+        if (status.elapsed_seconds > 0) {
+          setElapsedSeconds(status.elapsed_seconds);
+        }
+
+        if (status.match_id) {
+          navigate(`/matched?game=${selectedGame}&matchId=${status.match_id}`, { replace: true });
+        }
+      } catch {
+        // 서버 상태 확인 실패 시에도 화면 타이머는 계속 동작하게 둡니다.
+      }
+    };
+
+    void checkQueueStatus();
+    const pollingId = window.setInterval(checkQueueStatus, 3000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(pollingId);
+    };
+  }, [navigate, selectedGame]);
+
+  const handleLeaveQueue = async () => {
+    try {
+      await api.leaveQueue();
+    } catch {
+      // 이미 큐에서 빠졌거나 네트워크가 불안정해도 홈으로 이동합니다.
+    } finally {
+      navigate("/home");
+    }
+  };
 
   return (
     <main className="content matching-page">
@@ -61,14 +124,12 @@ function Matching() {
 
       <section className="matching-time">
         <p className="matching-time__current">{formatElapsedTime(elapsedSeconds)}</p>
-        <p className="matching-time__expected">예상 대기 시간 0:23</p>
+        <p className="matching-time__expected">
+          {waitingCount === null ? "예상 대기 시간 0:23" : `${waitingCount}명 대기 중`}
+        </p>
       </section>
 
-      <button
-        className="gradient-btn matching-exit"
-        type="button"
-        onClick={() => navigate("/home")}
-      >
+      <button className="gradient-btn matching-exit" type="button" onClick={handleLeaveQueue}>
         대기열 나가기
       </button>
     </main>

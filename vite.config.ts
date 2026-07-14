@@ -6,6 +6,18 @@ export default defineConfig({
   // 1. Vite가 빌드할 때 파일들을 찾을 기준 경로를 지정합니다. (앞뒤 슬래시 필수!)
   base: "/404-FE/",
 
+  server: {
+    host: true,
+    proxy: {
+      "/api": {
+        target: "https://gamematch-be.onrender.com",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
+
   plugins: [
     react(),
     VitePWA({

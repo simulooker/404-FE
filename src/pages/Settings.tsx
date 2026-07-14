@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
+import { clearAccessToken } from "../api/client";
 
 function Settings() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("userToken");
+    clearAccessToken();
     sessionStorage.clear();
     navigate("/", { replace: true });
   };
@@ -19,15 +20,27 @@ function Settings() {
       </header>
 
       <section className="settings-list" aria-label="설정 목록">
-        <button type="button" className="settings-item">
+        <button
+          type="button"
+          className="settings-item"
+          onClick={() => navigate("/settings/profile")}
+        >
           <span>프로필 수정</span>
           <strong>›</strong>
         </button>
-        <button type="button" className="settings-item">
+        <button
+          type="button"
+          className="settings-item"
+          onClick={() => navigate("/settings/notifications")}
+        >
           <span>알림 설정</span>
           <strong>›</strong>
         </button>
-        <button type="button" className="settings-item">
+        <button
+          type="button"
+          className="settings-item"
+          onClick={() => navigate("/settings/discord")}
+        >
           <span>디스코드 연결</span>
           <strong>›</strong>
         </button>

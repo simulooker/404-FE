@@ -1,6 +1,7 @@
 ﻿import { HashRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import CreateID from "./pages/createID";
+import DiscordConnect from "./pages/DiscordConnect";
 import GameChoice from "./pages/GameChoice";
 import GameResultFade from "./pages/gameresultfade";
 import GameResult from "./pages/GameResult";
@@ -11,6 +12,8 @@ import Matched from "./pages/matched";
 import Matching from "./pages/Matching";
 import MatchSetting from "./pages/MatchSetting";
 import MyPage from "./pages/MyPage";
+import NotificationSettings from "./pages/NotificationSettings";
+import ProfileEdit from "./pages/ProfileEdit";
 import Settings from "./pages/Settings";
 import "./App.css";
 
@@ -31,6 +34,9 @@ function App() {
           <Route path="/game-result" element={<GameResult />} />
           <Route path="/mypage" element={<MyPage />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/settings/profile" element={<ProfileEdit />} />
+          <Route path="/settings/notifications" element={<NotificationSettings />} />
+          <Route path="/settings/discord" element={<DiscordConnect />} />
         </Route>
       </Routes>
     </HashRouter>

@@ -186,7 +186,7 @@
 }
 
 .match-setting-header {
-  margin-bottom: 28px;
+  margin-bottom: 22px;
 }
 
 .match-setting-title {
@@ -197,6 +197,13 @@
   line-height: 1.2;
 }
 
+.match-setting-game-name {
+  margin: 6px 0 0;
+  color: #667085;
+  font-size: 13px;
+  font-weight: 800;
+}
+
 .match-setting-divider {
   height: 1px;
   background: #a7a7a7;
@@ -205,11 +212,15 @@
 
 .match-setting-section {
   padding: 0 10px;
-  margin-bottom: 38px;
+  margin-bottom: 28px;
+}
+
+.match-setting-section--mode {
+  margin-bottom: 24px;
 }
 
 .match-setting-section--people {
-  margin-bottom: 36px;
+  margin-bottom: 26px;
 }
 
 .match-setting-section--wait {
@@ -221,7 +232,7 @@
 }
 
 .match-setting-label {
-  margin: 0 0 28px;
+  margin: 0 0 18px;
   color: #111827;
   font-size: 17px;
   font-weight: 800;
@@ -339,6 +350,11 @@
   padding: 0 42px 0 10px;
 }
 
+.match-setting-select--mode {
+  width: 154px;
+  padding: 0 42px 0 14px;
+}
+
 .match-setting-wave {
   color: #111827;
   font-size: 20px;
@@ -393,7 +409,7 @@
 .match-setting-position-row {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   flex-wrap: nowrap;
 }
 
@@ -404,10 +420,10 @@
   border-radius: 9px;
   background: #ffffff;
   color: #111827;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 800;
   cursor: pointer;
-  padding: 0 12px;
+  padding: 0 10px;
   white-space: nowrap;
 }
 
@@ -1150,7 +1166,7 @@
   width: 100%;
   min-height: 58px;
   border: 1px solid #eaecf0;
-  border-radius: 14px;
+  border-radius: 8px;
   background: #ffffff;
   color: #111827;
   display: flex;
@@ -1166,6 +1182,284 @@
   color: #98a2b3;
   font-size: 28px;
   line-height: 1;
+}
+
+.settings-detail-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.settings-field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.settings-field input {
+  width: 100%;
+  height: 48px;
+  box-sizing: border-box;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 0 14px;
+  background: #ffffff;
+  color: #111827;
+  font: inherit;
+  font-weight: 500;
+  outline: none;
+}
+
+.settings-field input:focus {
+  border-color: #6f72ed;
+  box-shadow: 0 0 0 3px rgba(111, 114, 237, 0.12);
+}
+
+.settings-field small {
+  position: absolute;
+  right: 10px;
+  bottom: -18px;
+  color: #98a2b3;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.settings-fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-fieldset__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: #111827;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.settings-fieldset__heading small {
+  color: #667085;
+  font-size: 12px;
+}
+
+.profile-tag-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.profile-tag-option {
+  min-height: 36px;
+  border: 1px solid #d0d5dd;
+  border-radius: 18px;
+  padding: 0 13px;
+  background: #ffffff;
+  color: #475467;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.profile-tag-option[aria-pressed="true"] {
+  border-color: #111827;
+  background: #111827;
+  color: #ffffff;
+}
+
+.settings-toggle-row {
+  min-height: 62px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid #eaecf0;
+  padding: 4px 0 14px;
+}
+
+.settings-toggle-row--primary {
+  border-bottom-color: #d0d5dd;
+}
+
+.settings-toggle-row > div {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.settings-toggle-row strong {
+  color: #111827;
+  font-size: 15px;
+}
+
+.settings-toggle-row div > span {
+  color: #667085;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.settings-switch {
+  flex: 0 0 auto;
+  width: 48px;
+  height: 28px;
+  border: 0;
+  border-radius: 14px;
+  padding: 3px;
+  background: #d0d5dd;
+  cursor: pointer;
+  transition: background-color 160ms ease;
+}
+
+.settings-switch span {
+  display: block;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(16, 24, 40, 0.24);
+  transition: transform 160ms ease;
+}
+
+.settings-switch[aria-checked="true"] {
+  background: #6574ee;
+}
+
+.settings-switch[aria-checked="true"] span {
+  transform: translateX(20px);
+}
+
+.settings-switch:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.settings-save {
+  width: 100%;
+  min-height: 52px;
+  margin-top: auto;
+  font-size: 18px;
+}
+
+.notification-options {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.settings-secondary-button,
+.settings-danger-button {
+  width: 100%;
+  min-height: 48px;
+  border-radius: 8px;
+  background: #ffffff;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.settings-secondary-button {
+  border: 1px solid #6976eb;
+  color: #5965d8;
+}
+
+.settings-secondary-button:disabled {
+  border-color: #d0d5dd;
+  color: #98a2b3;
+  cursor: default;
+}
+
+.settings-danger-button {
+  border: 1px solid #f04438;
+  color: #d92d20;
+}
+
+.discord-connect-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.discord-connect-icon {
+  width: 58px;
+  height: 58px;
+  object-fit: contain;
+  margin-top: 20px;
+}
+
+.discord-connect-panel h2 {
+  margin: 18px 0 6px;
+  color: #111827;
+  font-size: 22px;
+}
+
+.discord-connect-panel > p {
+  min-height: 40px;
+  margin: 0 0 28px;
+  color: #667085;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.discord-username-field {
+  width: 100%;
+  text-align: left;
+}
+
+.discord-connect-button {
+  width: 100%;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  border: 0;
+  border-radius: 8px;
+  background: #5865f2;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.discord-connect-button img {
+  width: 24px;
+  height: 24px;
+  object-fit: contain;
+}
+
+.discord-connect-note {
+  margin: 24px 0 0;
+  color: #98a2b3;
+  font-size: 11px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-height: 720px) {
+  .settings-detail-page {
+    padding-top: 18px;
+  }
+
+  .settings-detail-page .settings-header {
+    margin-bottom: 18px;
+  }
+
+  .settings-form {
+    gap: 16px;
+  }
 }
 
 .mypage-body {

@@ -1,4 +1,4 @@
-﻿import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import homeButton from "../assets/navigationbar/homebutton.png";
 import homeButtonActive from "../assets/navigationbar/homebuttonactive.png";
 import mainButton from "../assets/navigationbar/mainbutton.png";
@@ -20,7 +20,8 @@ function BottomNav() {
   }
 
   const isHomeActive = location.pathname === "/home";
-  const isMyPageActive = location.pathname === "/mypage";
+  const isMyPageActive =
+    location.pathname === "/mypage" || location.pathname.startsWith("/settings");
 
   return (
     <nav className="bottom-nav" aria-label="주요 메뉴">

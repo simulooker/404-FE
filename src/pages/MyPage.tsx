@@ -1,9 +1,12 @@
-﻿import justLogo from "../assets/justlogo.png";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api, type ProfileMeResponse } from "../api/client";
+import justLogo from "../assets/justlogo.png";
 import mascot from "../assets/mascot.png";
 import background from "../assets/mypage/mypagebackground.png";
 import profile from "../assets/mypage/profile.png";
 import settingIcon from "../assets/mypage/setting.png";
+import { getProfilePreferences } from "../utils/preferences";
 
 const matchCards = [
   { result: "승리", emoji: "🏆", time: "32분 전", bg: "#b7cff4" },
@@ -15,6 +18,29 @@ const matchCards = [
 
 function MyPage() {
   const navigate = useNavigate();
+  const [profileInfo, setProfileInfo] = useState<ProfileMeResponse | null>(null);
+  const [profilePreferences] = useState(getProfilePreferences);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    api
+      .getProfileMe()
+      .then((profileData) => {
+        if (isMounted) {
+          setProfileInfo(profileData);
+        }
+      })
+      .catch(() => {
+        if (isMounted) {
+          setProfileInfo(null);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <main className="content mypage-page">
@@ -51,13 +77,20 @@ function MyPage() {
           </button>
 
           <div className="mypage-profile">
-            <h2 className="mypage-profile__name">닉네임</h2>
+            <h2 className="mypage-profile__name">
+              {profilePreferences.nickname || profileInfo?.nickname || "닉네임"}
+            </h2>
             <p className="mypage-profile__meta">
-              물리학과 <span className="mypage-profile__star">★</span> 4.5
+              {profilePreferences.department || profileInfo?.department || "물리학과"}{" "}
+              <span className="mypage-profile__star">★</span>{" "}
+              {profileInfo?.manner_score?.toFixed(1) ?? "4.5"}
             </p>
             <div className="mypage-tags">
-              <span className="mypage-tag">#빡겜러</span>
-              <span className="mypage-tag">#즐겜러</span>
+              {profilePreferences.playStyleTags.map((tag) => (
+                <span key={tag} className="mypage-tag">
+                  #{tag}
+                </span>
+              ))}
             </div>
           </div>
 
