@@ -2,6 +2,7 @@
 import Layout from "./components/Layout";
 import CreateID from "./pages/createID";
 import DiscordConnect from "./pages/DiscordConnect";
+import GameAccountSettings from "./pages/GameAccountSettings";
 import GameChoice from "./pages/GameChoice";
 import GameResultFade from "./pages/gameresultfade";
 import GameResult from "./pages/GameResult";
@@ -37,6 +38,7 @@ function App() {
           <Route path="/settings/profile" element={<ProfileEdit />} />
           <Route path="/settings/notifications" element={<NotificationSettings />} />
           <Route path="/settings/discord" element={<DiscordConnect />} />
+          <Route path="/settings/game-accounts" element={<GameAccountSettings />} />
         </Route>
       </Routes>
     </HashRouter>

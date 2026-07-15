@@ -64,45 +64,6 @@ const valorantTiers = [
   "Radiant",
 ];
 
-const overwatchTiers = [
-  "Bronze 5",
-  "Bronze 4",
-  "Bronze 3",
-  "Bronze 2",
-  "Bronze 1",
-  "Silver 5",
-  "Silver 4",
-  "Silver 3",
-  "Silver 2",
-  "Silver 1",
-  "Gold 5",
-  "Gold 4",
-  "Gold 3",
-  "Gold 2",
-  "Gold 1",
-  "Platinum 5",
-  "Platinum 4",
-  "Platinum 3",
-  "Platinum 2",
-  "Platinum 1",
-  "Diamond 5",
-  "Diamond 4",
-  "Diamond 3",
-  "Diamond 2",
-  "Diamond 1",
-  "Master 5",
-  "Master 4",
-  "Master 3",
-  "Master 2",
-  "Master 1",
-  "Grandmaster 5",
-  "Grandmaster 4",
-  "Grandmaster 3",
-  "Grandmaster 2",
-  "Grandmaster 1",
-  "Champion",
-];
-
 const pubgTiers = [
   "Bronze V",
   "Bronze IV",
@@ -167,17 +128,6 @@ const gameConfigs = {
     partyDefault: 5,
     optionLabel: "역할 선택",
     options: ["타격대", "척후대", "감시자", "전략가", "상관없음"],
-    optionDefault: "상관없음",
-  },
-  overwatch: {
-    name: "오버워치",
-    rankLabel: "내 랭크 설정",
-    ranks: overwatchTiers,
-    minDefault: "Gold 5",
-    partySizes: [1, 2, 3, 4, 5],
-    partyDefault: 5,
-    optionLabel: "역할 선택",
-    options: ["돌격", "공격", "지원", "상관없음"],
     optionDefault: "상관없음",
   },
   battleground: {
@@ -314,6 +264,11 @@ function MatchSetting() {
   };
 
   const handleSubmit = async () => {
+    if (selectedGame !== "leagueoflegends") {
+      alert("현재 백엔드는 리그 오브 레전드 매칭만 지원합니다.");
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
@@ -326,10 +281,13 @@ function MatchSetting() {
 
       sessionStorage.setItem("matchCriteria", JSON.stringify(matchCriteria));
 
+      const profile = await api.getProfileMe();
+
       await api.updateGameSettings({
         tier: toBackendTier(selectedRank),
         primary_position: toBackendPosition(option),
         secondary_position: "ANYTHING",
+        play_styles: profile.lol_profile?.play_styles ?? [],
       });
 
       const queue = await api.joinQueue();

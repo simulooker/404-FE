@@ -44,6 +44,14 @@ function Settings() {
           <span>디스코드 연결</span>
           <strong>›</strong>
         </button>
+        <button
+          type="button"
+          className="settings-item"
+          onClick={() => navigate("/settings/game-accounts")}
+        >
+          <span>게임 아이디 등록</span>
+          <strong>›</strong>
+        </button>
         <button type="button" className="settings-item" onClick={handleLogout}>
           <span>로그아웃</span>
           <strong>›</strong>

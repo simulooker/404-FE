@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { api } from "../api/client";
+import { api, type ProfileMeResponse } from "../api/client";
 import {
   getProfilePreferences,
   saveProfilePreferences,
@@ -8,13 +8,9 @@ import {
 
 const PLAY_STYLE_TAGS = [
   "즐겜",
-  "빡겜",
-  "소통형",
-  "조용한 플레이",
-  "초보 환영",
-  "팀플레이",
-  "리더형",
-  "전략형",
+  "승리우선",
+  "친목",
+  "초보환영",
 ];
 
 function ProfileEdit() {
@@ -22,21 +18,27 @@ function ProfileEdit() {
   const storedProfile = getProfilePreferences();
   const [nickname, setNickname] = useState(storedProfile.nickname);
   const [department, setDepartment] = useState(storedProfile.department);
-  const [selectedTags, setSelectedTags] = useState(storedProfile.playStyleTags);
+  const [selectedTags, setSelectedTags] = useState(
+    storedProfile.playStyleTags.filter((tag) => PLAY_STYLE_TAGS.includes(tag)),
+  );
   const [voiceChatEnabled, setVoiceChatEnabled] = useState(storedProfile.voiceChatEnabled);
+  const [serverProfile, setServerProfile] = useState<ProfileMeResponse | null>(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   useEffect(() => {
-    if (nickname && department) return;
-
     api
       .getProfileMe()
       .then((profile) => {
+        setServerProfile(profile);
         setNickname((current) => current || profile.nickname);
         setDepartment((current) => current || profile.department);
-        setVoiceChatEnabled((current) => current || profile.voice_chat_enable);
+        setVoiceChatEnabled(profile.voice_chat_enable);
+        setSelectedTags((current) =>
+          current.length > 0 ? current : (profile.lol_profile?.play_styles ?? []).slice(0, 3),
+        );
       })
       .catch(() => undefined);
-  }, [department, nickname]);
+  }, []);
 
   const toggleTag = (tag: string) => {
     if (selectedTags.includes(tag)) {
@@ -52,19 +54,44 @@ function ProfileEdit() {
     setSelectedTags([...selectedTags, tag]);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!nickname.trim()) {
       alert("닉네임을 입력해주세요.");
       return;
     }
 
-    saveProfilePreferences({
-      nickname: nickname.trim(),
-      department: department.trim(),
-      playStyleTags: selectedTags,
-      voiceChatEnabled,
-    });
-    navigate("/mypage", { replace: true });
+    if (!department.trim()) {
+      alert("학부(과)를 입력해주세요.");
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      await api.updateProfileMe({
+        department: department.trim(),
+        voice_chat_enable: voiceChatEnabled,
+      });
+
+      await api.updateGameSettings({
+        tier: serverProfile?.lol_profile?.tier ?? "UN_RANKED",
+        primary_position: serverProfile?.lol_profile?.primary_position ?? "ANYTHING",
+        secondary_position: serverProfile?.lol_profile?.secondary_position ?? "ANYTHING",
+        play_styles: selectedTags,
+      });
+
+      saveProfilePreferences({
+        nickname: nickname.trim(),
+        department: department.trim(),
+        playStyleTags: selectedTags,
+        voiceChatEnabled,
+      });
+      navigate("/mypage", { replace: true });
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "프로필 저장에 실패했습니다.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -136,8 +163,13 @@ function ProfileEdit() {
         </div>
       </div>
 
-      <button type="button" className="gradient-btn settings-save" onClick={handleSave}>
-        저장
+      <button
+        type="button"
+        className="gradient-btn settings-save"
+        disabled={isSaving}
+        onClick={handleSave}
+      >
+        {isSaving ? "저장 중" : "저장"}
       </button>
     </main>
   );

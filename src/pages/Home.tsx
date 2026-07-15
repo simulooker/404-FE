@@ -2,7 +2,6 @@
 import justLogo from "../assets/justlogo.png";
 import lolImg from "../assets/squareset/lolsquare.png";
 import valorantImg from "../assets/squareset/valorantsquare.png";
-import overwatchImg from "../assets/squareset/overwatchsquare.png";
 import pubgImg from "../assets/squareset/pubgsquare.png";
 import fifaImg from "../assets/squareset/fifasquare.png";
 
@@ -18,12 +17,6 @@ const games = [
     name: "VALORANT",
     players: "1.1천 명 플레이 중",
     image: valorantImg,
-  },
-  {
-    id: "overwatch",
-    name: "OVERWATCH",
-    players: "800명 플레이 중",
-    image: overwatchImg,
   },
   {
     id: "battleground",
@@ -98,7 +91,7 @@ function Home() {
         }}
       >
         {games.map((game) => {
-          const isCenteredCard = game.name === "FIFA";
+          const isFifa = game.name === "FIFA";
 
           return (
           <button
@@ -116,9 +109,6 @@ function Home() {
               padding: 0,
               cursor: "pointer",
               marginBottom: 0,
-              gridColumn: isCenteredCard ? "1 / -1" : undefined,
-              justifySelf: isCenteredCard ? "center" : undefined,
-              maxWidth: isCenteredCard ? "calc((100% - 14px) / 2)" : undefined,
             }}
           >
             <div
@@ -127,7 +117,7 @@ function Home() {
                 height: "100%",
                 backgroundImage: `url(${game.image})`,
                 backgroundSize: "cover",
-                backgroundPosition: isCenteredCard ? "center top" : "center",
+                backgroundPosition: isFifa ? "center top" : "center",
                 position: "absolute",
                 top: 0,
                 left: 0,

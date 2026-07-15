@@ -1448,6 +1448,121 @@
   text-align: center;
 }
 
+.game-account-page {
+  overflow-y: auto;
+}
+
+.game-account-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.game-account-item {
+  overflow: hidden;
+  border: 1px solid #eaecf0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.game-account-summary {
+  width: 100%;
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto 24px;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  padding: 9px 12px;
+  background: #ffffff;
+  color: #111827;
+  text-align: left;
+  cursor: pointer;
+}
+
+.game-account-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.game-account-name {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.game-account-status {
+  color: #98a2b3;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.game-account-chevron {
+  color: #667085;
+  font-size: 18px;
+  text-align: center;
+}
+
+.game-account-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid #eaecf0;
+  padding: 14px 12px 16px;
+  background: #f9fafb;
+}
+
+.game-account-editor label {
+  color: #344054;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.game-account-input-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 64px;
+  gap: 8px;
+}
+
+.game-account-input-row input {
+  min-width: 0;
+  height: 44px;
+  box-sizing: border-box;
+  border: 1px solid #d0d5dd;
+  border-radius: 8px;
+  padding: 0 12px;
+  background: #ffffff;
+  color: #111827;
+  font-size: 14px;
+  outline: none;
+}
+
+.game-account-input-row input:focus {
+  border-color: #6f72ed;
+  box-shadow: 0 0 0 3px rgba(111, 114, 237, 0.12);
+}
+
+.game-account-input-row button {
+  height: 44px;
+  border: 0;
+  border-radius: 8px;
+  background: #111827;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.game-account-input-row button:disabled {
+  background: #d0d5dd;
+  cursor: default;
+}
+
 @media (max-height: 720px) {
   .settings-detail-page {
     padding-top: 18px;
@@ -1627,6 +1742,14 @@
 
 .mypage-matches::-webkit-scrollbar {
   display: none;
+}
+
+.mypage-matches__empty {
+  margin: auto;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
 }
 
 .mypage-match-card {

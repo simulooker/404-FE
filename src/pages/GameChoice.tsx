@@ -1,14 +1,12 @@
 ﻿import { useNavigate } from "react-router-dom";
 import leagueImg from "../assets/gamechoice/leagueoflegends.png";
 import valorantImg from "../assets/gamechoice/valorant.png";
-import overwatchImg from "../assets/gamechoice/overwatch.png";
 import battlegroundImg from "../assets/gamechoice/battleground.png";
 import fifaImg from "../assets/gamechoice/fifa.png";
 
 const games = [
   { id: "leagueoflegends", name: "LEAGUE OF LEGENDS", image: leagueImg },
   { id: "valorant", name: "VALORANT", image: valorantImg },
-  { id: "overwatch", name: "OVERWATCH", image: overwatchImg },
   { id: "battleground", name: "PUBG", image: battlegroundImg },
   { id: "fifa", name: "FIFA", image: fifaImg },
 ];

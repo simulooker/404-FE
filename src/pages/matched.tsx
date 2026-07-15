@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   api,
@@ -92,7 +92,38 @@ function Matched() {
   const [members, setMembers] = useState<MatchMemberSummary[]>(demoMembers);
   const [acceptStatus, setAcceptStatus] = useState<AcceptStatusResponse | null>(null);
   const [demoAccepted, setDemoAccepted] = useState(false);
+  const [isResponding, setIsResponding] = useState(false);
+  const isReturningToQueue = useRef(false);
   const allAccepted = acceptStatus?.all_accepted ?? demoAccepted;
+
+  const returnToQueueAfterDecline = useCallback(async () => {
+    if (isReturningToQueue.current) return;
+
+    isReturningToQueue.current = true;
+    alert("다른 사용자가 매칭을 거절했습니다. 다시 대기열을 찾습니다.");
+
+    try {
+      await new Promise((resolve) => window.setTimeout(resolve, 500));
+      let queueStatus = await api.getQueueStatus();
+
+      if (!queueStatus.in_queue) {
+        try {
+          await api.joinQueue();
+        } catch {
+          queueStatus = await api.getQueueStatus();
+
+          if (!queueStatus.in_queue) {
+            throw new Error("대기열 재참가에 실패했습니다.");
+          }
+        }
+      }
+
+      navigate(`/matching?game=${selectedGame}`, { replace: true });
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "대기열 재참가에 실패했습니다.");
+      navigate("/home", { replace: true });
+    }
+  }, [navigate, selectedGame]);
 
   const loadMatchData = useCallback(async () => {
     if (!matchId) return;
@@ -102,9 +133,14 @@ function Matched() {
       api.getAcceptStatus(matchId),
     ]);
 
+    if (statusData.declined_count > 0) {
+      void returnToQueueAfterDecline();
+      return;
+    }
+
     setMembers(memberData.members);
     setAcceptStatus(statusData);
-  }, [matchId]);
+  }, [matchId, returnToQueueAfterDecline]);
 
   useEffect(() => {
     if (!matchId) return;
@@ -123,6 +159,8 @@ function Matched() {
   }, [loadMatchData, matchId]);
 
   const handleAccept = async () => {
+    if (isResponding) return;
+
     if (!matchId) {
       setDemoAccepted(true);
       setMembers((current) =>
@@ -131,31 +169,62 @@ function Matched() {
       return;
     }
 
+    setIsResponding(true);
+
     try {
       await api.acceptMatch(matchId);
       await loadMatchData();
     } catch (error) {
       alert(error instanceof Error ? error.message : "매칭 수락에 실패했습니다.");
+    } finally {
+      setIsResponding(false);
     }
   };
 
   const handleDecline = async () => {
+    if (isResponding) return;
+
     if (!matchId) {
+      alert("거절되었습니다.");
       navigate("/home");
       return;
     }
 
+    setIsResponding(true);
+
     try {
       await api.declineMatch(matchId);
-    } catch {
-      // 거절 요청 실패 시에도 사용자는 홈으로 돌려보냅니다.
-    } finally {
-      navigate("/home");
+
+      try {
+        await api.leaveQueue();
+      } catch {
+        // 거절 API에서 이미 대기열을 제거한 경우에는 그대로 진행합니다.
+      }
+
+      alert("거절되었습니다.");
+      navigate("/home", { replace: true });
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "매칭 거절에 실패했습니다.");
+      setIsResponding(false);
     }
   };
 
-  const goToResultFade = (result: ResultType) => {
-    navigate(`/game-result-fade?game=${selectedGame}&result=${result}`);
+  const goToResultFade = async (result: ResultType) => {
+    if (isResponding) return;
+
+    setIsResponding(true);
+
+    try {
+      if (matchId) {
+        await api.completeMatch(matchId);
+      }
+
+      const matchQuery = matchId ? `&matchId=${matchId}` : "";
+      navigate(`/game-result-fade?game=${selectedGame}&result=${result}${matchQuery}`);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "게임 완료 처리에 실패했습니다.");
+      setIsResponding(false);
+    }
   };
 
   return (
@@ -168,6 +237,7 @@ function Matched() {
               <button
                 className="matched-temp-done"
                 type="button"
+                disabled={isResponding}
                 onClick={() => goToResultFade("win")}
               >
                 임시 승리
@@ -175,6 +245,7 @@ function Matched() {
               <button
                 className="matched-temp-done matched-temp-done--lose"
                 type="button"
+                disabled={isResponding}
                 onClick={() => goToResultFade("lose")}
               >
                 임시 패배
@@ -229,10 +300,20 @@ function Matched() {
       </section>
 
       <div className="matched-actions">
-        <button className="matched-reject" type="button" onClick={handleDecline}>
+        <button
+          className="matched-reject"
+          type="button"
+          disabled={isResponding}
+          onClick={handleDecline}
+        >
           거절
         </button>
-        <button className="gradient-btn matched-accept" type="button" onClick={handleAccept}>
+        <button
+          className="gradient-btn matched-accept"
+          type="button"
+          disabled={isResponding}
+          onClick={handleAccept}
+        >
           수락
         </button>
       </div>

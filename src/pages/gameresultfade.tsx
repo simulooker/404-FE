@@ -4,18 +4,15 @@ import trophy from "../assets/trophy.png";
 import battlegroundSquare from "../assets/squareset/pubgsquare.png";
 import fifaSquare from "../assets/squareset/fifasquare.png";
 import leagueSquare from "../assets/squareset/lolsquare.png";
-import overwatchSquare from "../assets/squareset/overwatchsquare.png";
 import valorantSquare from "../assets/squareset/valorantsquare.png";
 import battlegroundBg from "../assets/resultfadebg/battleground.png";
 import fifaBg from "../assets/resultfadebg/fifa.png";
 import leagueBg from "../assets/resultfadebg/leagueoflegends.png";
-import overwatchBg from "../assets/resultfadebg/overwatch.png";
 import valorantBg from "../assets/resultfadebg/valorant.png";
 
 const games = {
   leagueoflegends: { name: "LEAGUE OF LEGENDS", image: leagueSquare, background: leagueBg },
   valorant: { name: "VALORANT", image: valorantSquare, background: valorantBg },
-  overwatch: { name: "OVERWATCH", image: overwatchSquare, background: overwatchBg },
   battleground: { name: "PUBG", image: battlegroundSquare, background: battlegroundBg },
   fifa: { name: "FIFA", image: fifaSquare, background: fifaBg },
 };
@@ -33,15 +30,17 @@ function GameResultFade() {
   const requestedGame = searchParams.get("game");
   const gameKey: GameKey = isGameKey(requestedGame) ? requestedGame : "valorant";
   const result: ResultType = searchParams.get("result") === "lose" ? "lose" : "win";
+  const matchId = searchParams.get("matchId");
   const game = games[gameKey];
 
   useEffect(() => {
     const timerId = window.setTimeout(() => {
-      navigate(`/game-result?game=${gameKey}&result=${result}`, { replace: true });
+      const matchQuery = matchId ? `&matchId=${matchId}` : "";
+      navigate(`/game-result?game=${gameKey}&result=${result}${matchQuery}`, { replace: true });
     }, 2200);
 
     return () => window.clearTimeout(timerId);
-  }, [gameKey, navigate, result]);
+  }, [gameKey, matchId, navigate, result]);
 
   return (
     <main className={`game-result-fade-page game-result-fade-page--${result}`}>

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { api } from "../api/client";
 import discordIcon from "../assets/matched/discord.png";
 import {
   getDiscordConnection,
@@ -11,22 +12,54 @@ function DiscordConnect() {
   const storedConnection = getDiscordConnection();
   const [connected, setConnected] = useState(storedConnection.connected);
   const [username, setUsername] = useState(storedConnection.username);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleConnect = () => {
+  useEffect(() => {
+    api
+      .getProfileMe()
+      .then((profile) => {
+        if (profile.discord_id) {
+          setUsername(profile.discord_id);
+          setConnected(true);
+          saveDiscordConnection({ connected: true, username: profile.discord_id });
+        }
+      })
+      .catch(() => undefined);
+  }, []);
+
+  const handleConnect = async () => {
     if (!username.trim()) {
       alert("Discord 사용자명을 입력해주세요.");
       return;
     }
 
-    const connection = { connected: true, username: username.trim() };
-    saveDiscordConnection(connection);
-    setConnected(true);
+    setIsSaving(true);
+
+    try {
+      await api.updateProfileMe({ discord_id: username.trim() });
+      const connection = { connected: true, username: username.trim() };
+      saveDiscordConnection(connection);
+      setConnected(true);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Discord 연결에 실패했습니다.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
-  const handleDisconnect = () => {
-    saveDiscordConnection({ connected: false, username: "" });
-    setConnected(false);
-    setUsername("");
+  const handleDisconnect = async () => {
+    setIsSaving(true);
+
+    try {
+      await api.updateProfileMe({ discord_id: null });
+      saveDiscordConnection({ connected: false, username: "" });
+      setConnected(false);
+      setUsername("");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "Discord 연결 해제에 실패했습니다.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -48,8 +81,13 @@ function DiscordConnect() {
         </p>
 
         {connected ? (
-          <button type="button" className="settings-danger-button" onClick={handleDisconnect}>
-            연결 해제
+          <button
+            type="button"
+            className="settings-danger-button"
+            disabled={isSaving}
+            onClick={handleDisconnect}
+          >
+            {isSaving ? "처리 중" : "연결 해제"}
           </button>
         ) : (
           <>
@@ -63,9 +101,14 @@ function DiscordConnect() {
                 onChange={(event) => setUsername(event.target.value)}
               />
             </label>
-            <button type="button" className="discord-connect-button" onClick={handleConnect}>
+            <button
+              type="button"
+              className="discord-connect-button"
+              disabled={isSaving}
+              onClick={handleConnect}
+            >
               <img src={discordIcon} alt="" />
-              Discord로 연결
+              {isSaving ? "연결 중" : "Discord로 연결"}
             </button>
           </>
         )}

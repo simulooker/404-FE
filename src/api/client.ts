@@ -35,13 +35,33 @@ export type ProfileMeResponse = {
   department: string;
   voice_chat_enable: boolean;
   manner_score: number;
-  lol_profile: unknown | null;
+  lol_profile: LolProfileResponse | null;
 };
 
-export type GameSettingsUpdate = {
+export type LolProfileResponse = {
   tier: string;
   primary_position: string;
   secondary_position: string;
+  play_styles: string[] | null;
+  tier_rank: number;
+  riot_id: string | null;
+  tier_updated_at: string | null;
+  updated_at: string | null;
+};
+
+export type ProfileMeUpdate = {
+  discord_id?: string | null;
+  department?: string | null;
+  voice_chat_enable?: boolean | null;
+};
+
+export type GameSettingsUpdate = {
+  tier?: string;
+  primary_position: string;
+  secondary_position: string;
+  play_styles: string[];
+  riot_id?: string | null;
+  sync_tier_from_riot?: boolean;
 };
 
 export type QueueJoinResponse = {
@@ -77,6 +97,8 @@ export type MatchDetailResponse = {
   accept_deadline: string | null;
   created_at: string;
   confirmed_at: string | null;
+  completed_at: string | null;
+  evaluation_deadline: string | null;
   my_accept_status?: string | null;
 };
 
@@ -118,16 +140,46 @@ export type MatchActionResponse = {
   message: string;
 };
 
+export type MatchEvaluationItem = {
+  target_user_id: number;
+  manner_delta: -1 | 0 | 1;
+};
+
+export type MatchEvaluateResponse = {
+  match_id: number;
+  submitted_count: number;
+  message: string;
+};
+
+export type MatchHistoryItem = {
+  match_id: number;
+  game: string;
+  status: string;
+  my_assigned_role: string;
+  my_tier: string;
+  member_count: number;
+  confirmed_at: string | null;
+  completed_at: string | null;
+  evaluation_submitted: boolean;
+};
+
+export type MatchHistoryResponse = {
+  total: number;
+  items: MatchHistoryItem[];
+};
+
 export function getAccessToken() {
-  return localStorage.getItem(TOKEN_KEY);
+  return sessionStorage.getItem(TOKEN_KEY);
 }
 
 export function saveAccessToken(token: string) {
-  localStorage.setItem(TOKEN_KEY, token);
+  localStorage.removeItem(TOKEN_KEY);
+  sessionStorage.setItem(TOKEN_KEY, token);
 }
 
 export function clearAccessToken() {
   localStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
 }
 
 function leaveQueueOnPageClose() {
@@ -199,10 +251,22 @@ export const api = {
   getProfileMe() {
     return apiRequest<ProfileMeResponse>("/profile/me");
   },
+  updateProfileMe(payload: ProfileMeUpdate) {
+    return apiRequest<ProfileMeResponse>("/profile/me", {
+      method: "PATCH",
+      body: payload,
+    });
+  },
   updateGameSettings(payload: GameSettingsUpdate) {
     return apiRequest<ProfileMeResponse>("/profile/game-settings", {
       method: "PATCH",
       body: payload,
+    });
+  },
+  syncRiotProfile(riotId: string) {
+    return apiRequest<ProfileMeResponse>("/profile/riot/sync", {
+      method: "POST",
+      body: { riot_id: riotId },
     });
   },
   joinQueue() {
@@ -220,7 +284,10 @@ export const api = {
   },
   leaveQueueOnPageClose,
   getActiveMatch() {
-    return apiRequest<MatchDetailResponse>("/match/active");
+    return apiRequest<MatchDetailResponse | null>("/match/active");
+  },
+  getMatchHistory(limit = 20, offset = 0) {
+    return apiRequest<MatchHistoryResponse>(`/match/history?limit=${limit}&offset=${offset}`);
   },
   getMatch(matchId: number) {
     return apiRequest<MatchDetailResponse>(`/match/${matchId}`);
@@ -239,6 +306,17 @@ export const api = {
   declineMatch(matchId: number) {
     return apiRequest<MatchActionResponse>(`/match/${matchId}/decline`, {
       method: "POST",
+    });
+  },
+  completeMatch(matchId: number) {
+    return apiRequest<MatchDetailResponse>(`/match/${matchId}/complete`, {
+      method: "POST",
+    });
+  },
+  evaluateMatch(matchId: number, evaluations: MatchEvaluationItem[]) {
+    return apiRequest<MatchEvaluateResponse>(`/match/${matchId}/evaluate`, {
+      method: "POST",
+      body: { evaluations },
     });
   },
 };

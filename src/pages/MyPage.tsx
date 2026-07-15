@@ -8,18 +8,34 @@ import profile from "../assets/mypage/profile.png";
 import settingIcon from "../assets/mypage/setting.png";
 import { getProfilePreferences } from "../utils/preferences";
 
-const matchCards = [
-  { result: "승리", emoji: "🏆", time: "32분 전", bg: "#b7cff4" },
-  { result: "패배", emoji: "", time: "1시간 전", bg: "#f3b9bb" },
-  { result: "승리", emoji: "🏆", time: "1시간 32분 전", bg: "linear-gradient(180deg, #cfd8e8 0%, #9fb0ca 100%)" },
-  { result: "패배", emoji: "", time: "2시간 전", bg: "#f3b9bb" },
-  { result: "승리", emoji: "🏆", time: "3시간 전", bg: "#b7cff4" },
-];
+type MatchCard = {
+  id: number | string;
+  result: string;
+  emoji: string;
+  time: string;
+  game: string;
+  bg: string;
+};
+
+function formatRelativeTime(value: string | null) {
+  if (!value) return "시간 정보 없음";
+
+  const elapsedMinutes = Math.max(0, Math.floor((Date.now() - new Date(value).getTime()) / 60000));
+
+  if (elapsedMinutes < 1) return "방금 전";
+  if (elapsedMinutes < 60) return `${elapsedMinutes}분 전`;
+
+  const elapsedHours = Math.floor(elapsedMinutes / 60);
+  if (elapsedHours < 24) return `${elapsedHours}시간 전`;
+
+  return `${Math.floor(elapsedHours / 24)}일 전`;
+}
 
 function MyPage() {
   const navigate = useNavigate();
   const [profileInfo, setProfileInfo] = useState<ProfileMeResponse | null>(null);
   const [profilePreferences] = useState(getProfilePreferences);
+  const [matchCards, setMatchCards] = useState<MatchCard[]>([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -36,6 +52,27 @@ function MyPage() {
           setProfileInfo(null);
         }
       });
+
+    api
+      .getMatchHistory()
+      .then((history) => {
+        if (!isMounted) return;
+
+        setMatchCards(
+          history.items.map((item) => ({
+            id: item.match_id,
+            result: item.status === "completed" ? "게임 완료" : "매칭 확정",
+            emoji: item.status === "completed" ? "🏆" : "",
+            time: formatRelativeTime(item.completed_at ?? item.confirmed_at),
+            game: item.game === "lol" ? "리그오브레전드" : item.game,
+            bg:
+              item.status === "completed"
+                ? "#b7cff4"
+                : "linear-gradient(180deg, #cfd8e8 0%, #9fb0ca 100%)",
+          })),
+        );
+      })
+      .catch(() => undefined);
 
     return () => {
       isMounted = false;
@@ -86,7 +123,7 @@ function MyPage() {
               {profileInfo?.manner_score?.toFixed(1) ?? "4.5"}
             </p>
             <div className="mypage-tags">
-              {profilePreferences.playStyleTags.map((tag) => (
+              {(profileInfo?.lol_profile?.play_styles ?? profilePreferences.playStyleTags).map((tag) => (
                 <span key={tag} className="mypage-tag">
                   #{tag}
                 </span>
@@ -95,9 +132,11 @@ function MyPage() {
           </div>
 
           <section className="mypage-matches" aria-label="최근 전적">
-            {matchCards.map((card) => (
+            {matchCards.length === 0 ? (
+              <p className="mypage-matches__empty">아직 표시할 전적이 없어요.</p>
+            ) : matchCards.map((card) => (
               <article
-                key={card.result + card.time}
+                key={card.id}
                 className="mypage-match-card"
                 style={{ background: card.bg }}
               >
@@ -108,7 +147,7 @@ function MyPage() {
                   </div>
                   <div className="mypage-match-card__meta">
                     <span>{card.time}</span>
-                    <span className="mypage-match-card__game">리그오브레전드</span>
+                    <span className="mypage-match-card__game">{card.game}</span>
                   </div>
                 </div>
               </article>
