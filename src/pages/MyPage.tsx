@@ -7,6 +7,13 @@ import background from "../assets/mypage/mypagebackground.png";
 import profile from "../assets/mypage/profile.png";
 import settingIcon from "../assets/mypage/setting.png";
 import { getProfilePreferences } from "../utils/preferences";
+import { getProfileAvatar } from "../utils/profileAvatars";
+
+type MatchCardMember = {
+  userId: number;
+  nickname: string;
+  avatar: string;
+};
 
 type MatchCard = {
   id: number | string;
@@ -15,6 +22,7 @@ type MatchCard = {
   time: string;
   game: string;
   bg: string;
+  members: MatchCardMember[];
 };
 
 function formatRelativeTime(value: string | null) {
@@ -39,9 +47,9 @@ function MyPage() {
 
   useEffect(() => {
     let isMounted = true;
+    const profileRequest = api.getProfileMe();
 
-    api
-      .getProfileMe()
+    profileRequest
       .then((profileData) => {
         if (isMounted) {
           setProfileInfo(profileData);
@@ -53,13 +61,28 @@ function MyPage() {
         }
       });
 
-    api
-      .getMatchHistory()
-      .then((history) => {
+    Promise.all([profileRequest, api.getMatchHistory()])
+      .then(async ([currentProfile, history]) => {
         if (!isMounted) return;
 
-        setMatchCards(
-          history.items.map((item) => ({
+        const cards = await Promise.all(
+          history.items.map(async (item) => {
+            let members: MatchCardMember[];
+
+            try {
+              const memberData = await api.getMatchMembers(item.match_id);
+              members = memberData.members
+                .filter((member) => member.user_id !== currentProfile.id)
+                .map((member) => ({
+                  userId: member.user_id,
+                  nickname: member.nickname,
+                  avatar: getProfileAvatar(member.user_id),
+                }));
+            } catch {
+              members = [];
+            }
+
+            return {
             id: item.match_id,
             result: item.status === "completed" ? "게임 완료" : "매칭 확정",
             emoji: item.status === "completed" ? "🏆" : "",
@@ -69,8 +92,14 @@ function MyPage() {
               item.status === "completed"
                 ? "#b7cff4"
                 : "linear-gradient(180deg, #cfd8e8 0%, #9fb0ca 100%)",
-          })),
+              members,
+            };
+          }),
         );
+
+        if (isMounted) {
+          setMatchCards(cards);
+        }
       })
       .catch(() => undefined);
 
@@ -149,6 +178,21 @@ function MyPage() {
                     <span>{card.time}</span>
                     <span className="mypage-match-card__game">{card.game}</span>
                   </div>
+                </div>
+                <div className="mypage-match-card__members" aria-label="함께한 팀원">
+                  {card.members.map((member) => (
+                    <button
+                      key={member.userId}
+                      type="button"
+                      className="mypage-match-card__member"
+                      aria-label={`${member.nickname} 프로필 보기`}
+                      onClick={() =>
+                        navigate(`/member-profile?matchId=${card.id}&userId=${member.userId}`)
+                      }
+                    >
+                      <img src={member.avatar} alt="" />
+                    </button>
+                  ))}
                 </div>
               </article>
             ))}

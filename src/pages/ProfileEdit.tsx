@@ -74,7 +74,6 @@ function ProfileEdit() {
       });
 
       await api.updateGameSettings({
-        tier: serverProfile?.lol_profile?.tier ?? "UN_RANKED",
         primary_position: serverProfile?.lol_profile?.primary_position ?? "ANYTHING",
         secondary_position: serverProfile?.lol_profile?.secondary_position ?? "ANYTHING",
         play_styles: selectedTags,

@@ -50,6 +50,7 @@ function GameAccountSettings() {
   });
   const [registeredGames, setRegisteredGames] = useState<GameId[]>([]);
   const [savingGame, setSavingGame] = useState<GameId | null>(null);
+  const [riotVerificationCode, setRiotVerificationCode] = useState("");
 
   useEffect(() => {
     api
@@ -71,10 +72,18 @@ function GameAccountSettings() {
       return;
     }
 
+    if (!riotVerificationCode.trim()) {
+      alert("LoL 클라이언트의 Third Party Code를 입력해주세요.");
+      return;
+    }
+
     setSavingGame(gameId);
 
     try {
-      const profile = await api.syncRiotProfile(gameIds[gameId].trim());
+      const profile = await api.syncRiotProfile(
+        gameIds[gameId].trim(),
+        riotVerificationCode.trim(),
+      );
       const riotId = profile.lol_profile?.riot_id ?? gameIds[gameId].trim();
       setGameIds((current) => ({ ...current, [gameId]: riotId }));
       setRegisteredGames((current) =>
@@ -121,6 +130,21 @@ function GameAccountSettings() {
 
               {isOpen ? (
                 <div className="game-account-editor">
+                  {game.id === "leagueoflegends" ? (
+                    <>
+                      <label htmlFor="riot-verification-code">Third Party Code</label>
+                      <input
+                        id="riot-verification-code"
+                        className="game-account-verification"
+                        type="text"
+                        value={riotVerificationCode}
+                        placeholder="LoL 클라이언트 Third Party Code"
+                        autoCapitalize="none"
+                        autoComplete="off"
+                        onChange={(event) => setRiotVerificationCode(event.target.value)}
+                      />
+                    </>
+                  ) : null}
                   <label htmlFor={`${game.id}-account`}>{game.label}</label>
                   <div className="game-account-input-row">
                     <input
@@ -139,7 +163,11 @@ function GameAccountSettings() {
                     />
                     <button
                       type="button"
-                      disabled={!gameIds[game.id].trim() || savingGame === game.id}
+                      disabled={
+                        !gameIds[game.id].trim() ||
+                        savingGame === game.id ||
+                        (game.id === "leagueoflegends" && !riotVerificationCode.trim())
+                      }
                       onClick={() => handleRegister(game.id)}
                     >
                       {savingGame === game.id ? "처리 중" : "등록"}

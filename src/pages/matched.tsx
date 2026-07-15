@@ -194,13 +194,6 @@ function Matched() {
 
     try {
       await api.declineMatch(matchId);
-
-      try {
-        await api.leaveQueue();
-      } catch {
-        // 거절 API에서 이미 대기열을 제거한 경우에는 그대로 진행합니다.
-      }
-
       alert("거절되었습니다.");
       navigate("/home", { replace: true });
     } catch (error) {

@@ -12,6 +12,7 @@ import MatchDone from "./pages/MatchDone";
 import Matched from "./pages/matched";
 import Matching from "./pages/Matching";
 import MatchSetting from "./pages/MatchSetting";
+import MemberProfile from "./pages/MemberProfile";
 import MyPage from "./pages/MyPage";
 import NotificationSettings from "./pages/NotificationSettings";
 import ProfileEdit from "./pages/ProfileEdit";
@@ -34,6 +35,7 @@ function App() {
           <Route path="/game-result-fade" element={<GameResultFade />} />
           <Route path="/game-result" element={<GameResult />} />
           <Route path="/mypage" element={<MyPage />} />
+          <Route path="/member-profile" element={<MemberProfile />} />
           <Route path="/settings" element={<Settings />} />
           <Route path="/settings/profile" element={<ProfileEdit />} />
           <Route path="/settings/notifications" element={<NotificationSettings />} />

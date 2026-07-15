@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
 
@@ -110,7 +110,7 @@ const fifaTiers = [
 const gameConfigs = {
   leagueoflegends: {
     name: "리그 오브 레전드",
-    rankLabel: "내 티어 설정",
+    rankLabel: "현재 티어",
     ranks: lolTiers,
     minDefault: "Gold III",
     partySizes: [1, 2, 3, 4, 5],
@@ -161,25 +161,6 @@ function isGameKey(value: string | null): value is GameKey {
   return Boolean(value && value in gameConfigs);
 }
 
-function toBackendTier(rank: string) {
-  const upperRank = rank.toUpperCase();
-
-  if (upperRank.includes("IRON")) return "IRON";
-  if (upperRank.includes("BRONZE")) return "BRONZE";
-  if (upperRank.includes("SILVER")) return "SILVER";
-  if (upperRank.includes("GOLD")) return "GOLD";
-  if (upperRank.includes("PLATINUM")) return "PLATINUM";
-  if (upperRank.includes("EMERALD")) return "EMERALD";
-  if (upperRank.includes("DIAMOND")) return "DIAMOND";
-  if (upperRank.includes("MASTER")) return "MASTER";
-  if (upperRank.includes("GRANDMASTER")) return "GRANDMASTER";
-  if (upperRank.includes("CHALLENGER") || upperRank.includes("RADIANT") || upperRank.includes("ELITE")) {
-    return "CHALLENGER";
-  }
-
-  return "UN_RANKED";
-}
-
 function toBackendPosition(value: string) {
   const positionMap: Record<string, string> = {
     탑: "TOP",
@@ -220,6 +201,31 @@ function MatchSetting() {
   const [option, setOption] = useState(config.optionDefault);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (selectedGame !== "leagueoflegends") return;
+
+    let isMounted = true;
+
+    api
+      .getProfileMe()
+      .then((profile) => {
+        if (!isMounted || !profile.lol_profile) return;
+
+        const tier = profile.lol_profile.tier;
+        const division = profile.lol_profile.rank_division;
+        const formattedTier =
+          tier === "UN_RANKED"
+            ? "UN_RANKED"
+            : `${tier.charAt(0)}${tier.slice(1).toLowerCase()}${division ? ` ${division}` : ""}`;
+        setSelectedRank(formattedTier);
+      })
+      .catch(() => undefined);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [selectedGame]);
+
   const renderRankDropdown = (
     id: Exclude<OpenRank, null>,
     value: string,
@@ -232,9 +238,12 @@ function MatchSetting() {
       <div className="match-setting-tier-select">
         <button
           type="button"
-          className="match-setting-tier-button"
+          className={`match-setting-tier-button${
+            selectedGame === "leagueoflegends" ? " match-setting-tier-button--readonly" : ""
+          }`}
           aria-label={label}
           aria-expanded={isOpen}
+          disabled={selectedGame === "leagueoflegends"}
           onClick={() => setOpenRank(isOpen ? null : id)}
         >
           <span>{value}</span>
@@ -284,7 +293,6 @@ function MatchSetting() {
       const profile = await api.getProfileMe();
 
       await api.updateGameSettings({
-        tier: toBackendTier(selectedRank),
         primary_position: toBackendPosition(option),
         secondary_position: "ANYTHING",
         play_styles: profile.lol_profile?.play_styles ?? [],

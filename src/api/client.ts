@@ -32,6 +32,7 @@ export type ProfileMeResponse = {
   email: string;
   nickname: string;
   discord_id: string | null;
+  college: string;
   department: string;
   voice_chat_enable: boolean;
   manner_score: number;
@@ -44,6 +45,8 @@ export type LolProfileResponse = {
   secondary_position: string;
   play_styles: string[] | null;
   tier_rank: number;
+  rank_division: string | null;
+  league_points: number | null;
   riot_id: string | null;
   tier_updated_at: string | null;
   updated_at: string | null;
@@ -56,11 +59,11 @@ export type ProfileMeUpdate = {
 };
 
 export type GameSettingsUpdate = {
-  tier?: string;
   primary_position: string;
   secondary_position: string;
   play_styles: string[];
   riot_id?: string | null;
+  riot_verification_code?: string | null;
   sync_tier_from_riot?: boolean;
 };
 
@@ -263,10 +266,10 @@ export const api = {
       body: payload,
     });
   },
-  syncRiotProfile(riotId: string) {
+  syncRiotProfile(riotId: string, verificationCode: string) {
     return apiRequest<ProfileMeResponse>("/profile/riot/sync", {
       method: "POST",
-      body: { riot_id: riotId },
+      body: { riot_id: riotId, verification_code: verificationCode },
     });
   },
   joinQueue() {

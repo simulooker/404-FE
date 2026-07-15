@@ -21,7 +21,9 @@ function BottomNav() {
 
   const isHomeActive = location.pathname === "/home";
   const isMyPageActive =
-    location.pathname === "/mypage" || location.pathname.startsWith("/settings");
+    location.pathname === "/mypage" ||
+    location.pathname === "/member-profile" ||
+    location.pathname.startsWith("/settings");
 
   return (
     <nav className="bottom-nav" aria-label="주요 메뉴">
