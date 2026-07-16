@@ -72,7 +72,7 @@ function Login() {
           style={helperTextStyle}
           onClick={() => navigate("/create-id")}
         >
-          전남대 이메일 인증하기
+          회원가입 하기
         </button>
       </section>
     </main>

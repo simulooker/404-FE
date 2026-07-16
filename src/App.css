@@ -442,6 +442,61 @@
   color: white;
 }
 
+.match-setting-position--primary {
+  border-color: #000000;
+  background: #000000;
+  color: #ffffff;
+}
+
+.match-setting-position--secondary {
+  border-color: #98a2b3;
+  background: #98a2b3;
+  color: #ffffff;
+}
+
+.match-setting-position-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.match-setting-position-heading .match-setting-label {
+  flex: 0 0 auto;
+}
+
+.match-setting-line-keys {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 18px;
+}
+
+.match-setting-line-key {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px;
+  background: transparent;
+  color: #667085;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.match-setting-line-key__square {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+}
+
+.match-setting-line-key__square--primary {
+  background: #000000;
+}
+
+.match-setting-line-key__square--secondary {
+  background: #98a2b3;
+}
+
 .match-setting-submit {
   height: 79px;
   border-radius: 18px;
@@ -459,21 +514,6 @@
   align-items: center;
   overflow: hidden;
   position: relative;
-}
-
-.matching-temp-button {
-  position: absolute;
-  top: 22px;
-  right: 22px;
-  z-index: 5;
-  border: 0;
-  border-radius: 999px;
-  background: #111827;
-  color: white;
-  padding: 8px 14px;
-  font-size: 13px;
-  font-weight: 800;
-  cursor: pointer;
 }
 
 .matching-brand {
@@ -626,27 +666,6 @@
   font-size: 35px;
   font-weight: 900;
   line-height: 1.1;
-}
-
-.matched-temp-done {
-  border: 0;
-  border-radius: 999px;
-  background: #111827;
-  color: white;
-  padding: 7px 12px;
-  font-size: 12px;
-  font-weight: 800;
-  cursor: pointer;
-}
-
-.matched-temp-actions {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.matched-temp-done--lose {
-  background: #ef4444;
 }
 
 .matched-header p {
@@ -1511,6 +1530,19 @@
   font-weight: 700;
 }
 
+.game-account-state {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  white-space: nowrap;
+}
+
+.game-account-tier {
+  color: #344054;
+  font-size: 11px;
+  font-weight: 800;
+}
+
 .game-account-chevron {
   color: #667085;
   font-size: 18px;
@@ -1551,25 +1583,6 @@
   outline: none;
 }
 
-.game-account-verification {
-  width: 100%;
-  min-width: 0;
-  height: 44px;
-  box-sizing: border-box;
-  border: 1px solid #d0d5dd;
-  border-radius: 8px;
-  padding: 0 12px;
-  background: #ffffff;
-  color: #111827;
-  font-size: 14px;
-  outline: none;
-}
-
-.game-account-verification:focus {
-  border-color: #6f72ed;
-  box-shadow: 0 0 0 3px rgba(111, 114, 237, 0.12);
-}
-
 .game-account-input-row input:focus {
   border-color: #6f72ed;
   box-shadow: 0 0 0 3px rgba(111, 114, 237, 0.12);
@@ -1588,6 +1601,24 @@
 
 .game-account-input-row button:disabled {
   background: #d0d5dd;
+  cursor: default;
+}
+
+.game-account-refresh {
+  width: 100%;
+  height: 38px;
+  border: 1px solid #667085;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #344054;
+  font-size: 13px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.game-account-refresh:disabled {
+  border-color: #d0d5dd;
+  color: #98a2b3;
   cursor: default;
 }
 

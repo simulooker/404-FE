@@ -4,36 +4,49 @@ import lolImg from "../assets/squareset/lolsquare.png";
 import valorantImg from "../assets/squareset/valorantsquare.png";
 import pubgImg from "../assets/squareset/pubgsquare.png";
 import fifaImg from "../assets/squareset/fifasquare.png";
+import {
+  GAME_ACCOUNT_REQUIRED_MESSAGE,
+  hasRegisteredGameAccount,
+  type GameId,
+} from "../utils/gameAccounts";
 
 const games = [
   {
     id: "leagueoflegends",
     name: "LEAGUE OF LEGENDS",
-    players: "1.4천 명 플레이 중",
     image: lolImg,
   },
   {
     id: "valorant",
     name: "VALORANT",
-    players: "1.1천 명 플레이 중",
     image: valorantImg,
   },
   {
     id: "battleground",
     name: "PUBG",
-    players: "800명 플레이 중",
     image: pubgImg,
   },
   {
     id: "fifa",
     name: "FIFA",
-    players: "600명 플레이 중",
     image: fifaImg,
   },
 ];
 
 function Home() {
   const navigate = useNavigate();
+
+  const handleGameSelect = async (gameId: GameId) => {
+    try {
+      if (!(await hasRegisteredGameAccount(gameId))) {
+        alert(GAME_ACCOUNT_REQUIRED_MESSAGE);
+        return;
+      }
+      navigate(`/match-setting?game=${gameId}`);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "게임 계정 정보를 확인하지 못했습니다.");
+    }
+  };
 
   return (
     <main className="content" style={{ padding: "20px" }}>
@@ -98,7 +111,7 @@ function Home() {
             key={game.name}
             className="card"
             type="button"
-            onClick={() => navigate(`/match-setting?game=${game.id}`)}
+            onClick={() => void handleGameSelect(game.id as GameId)}
             style={{
               width: "100%",
               aspectRatio: "1 / 1",
@@ -150,20 +163,6 @@ function Home() {
                 textAlign: "left",
               }}
             >
-              <span
-                style={{
-                  alignSelf: "flex-end",
-                  textAlign: "right",
-                  fontSize: "10px",
-                  color: "white",
-                  backgroundColor: "rgba(0,0,0,0.5)",
-                  padding: "4px 8px",
-                  borderRadius: "8px",
-                  backdropFilter: "blur(4px)",
-                }}
-              >
-                {game.players}
-              </span>
               <span
                 style={{
                   color: "white",

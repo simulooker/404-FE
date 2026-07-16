@@ -92,14 +92,6 @@ function Matching() {
 
   return (
     <main className="content matching-page">
-      <button
-        className="matching-temp-button"
-        type="button"
-        onClick={() => navigate(`/matched?game=${selectedGame}`)}
-      >
-        임시
-      </button>
-
       <header className="matching-brand">
         <img src={justLogo} alt="GameLink 로고" className="matching-brand__logo" />
         <h1 className="matching-brand__title">

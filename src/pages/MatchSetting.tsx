@@ -1,6 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { api } from "../api/client";
+import {
+  GAME_ACCOUNT_REQUIRED_MESSAGE,
+  hasRegisteredGameAccount,
+} from "../utils/gameAccounts";
+
+const lolModes = ["솔랭", "자랭", "칼바람"] as const;
+const lolPositions = ["미드", "탑", "정글", "원딜", "서폿"] as const;
+
+type NextLineTarget = "primary" | "secondary";
 
 const lolTiers = [
   "Iron IV",
@@ -113,10 +122,10 @@ const gameConfigs = {
     rankLabel: "현재 티어",
     ranks: lolTiers,
     minDefault: "Gold III",
-    partySizes: [1, 2, 3, 4, 5],
-    partyDefault: 4,
+    partySizes: [1, 2, 3, 4],
+    partyDefault: 1,
     optionLabel: "포지션 선택",
-    options: ["미드", "탑", "정글", "원딜", "서폿"],
+    options: lolPositions,
     optionDefault: "미드",
   },
   valorant: {
@@ -125,7 +134,7 @@ const gameConfigs = {
     ranks: valorantTiers,
     minDefault: "Gold 1",
     partySizes: [1, 2, 3, 4, 5],
-    partyDefault: 5,
+    partyDefault: 1,
     optionLabel: "역할 선택",
     options: ["타격대", "척후대", "감시자", "전략가", "상관없음"],
     optionDefault: "상관없음",
@@ -136,7 +145,7 @@ const gameConfigs = {
     ranks: pubgTiers,
     minDefault: "Gold III",
     partySizes: [1, 2, 3, 4],
-    partyDefault: 4,
+    partyDefault: 1,
     optionLabel: "",
     options: [],
     optionDefault: "상관없음",
@@ -188,6 +197,18 @@ function toBackendPosition(value: string) {
   return positionMap[value] ?? "ANYTHING";
 }
 
+function fromBackendPosition(value: string | null | undefined) {
+  const positionMap: Record<string, (typeof lolPositions)[number]> = {
+    TOP: "탑",
+    JUNGLE: "정글",
+    MID: "미드",
+    ADC: "원딜",
+    SUPPORT: "서폿",
+  };
+
+  return value ? positionMap[value] ?? "" : "";
+}
+
 function MatchSetting() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -198,8 +219,16 @@ function MatchSetting() {
   const [selectedRank, setSelectedRank] = useState(config.minDefault);
   const [openRank, setOpenRank] = useState<OpenRank>(null);
   const [partySize, setPartySize] = useState(config.partyDefault);
+  const [lolMode, setLolMode] = useState<(typeof lolModes)[number]>("솔랭");
   const [option, setOption] = useState(config.optionDefault);
+  const [primaryLine, setPrimaryLine] = useState<string>("");
+  const [secondaryLine, setSecondaryLine] = useState<string>("");
+  const [nextLineTarget, setNextLineTarget] = useState<NextLineTarget>("primary");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const availablePartySizes =
+    selectedGame === "leagueoflegends" && lolMode === "솔랭"
+      ? [1, 2]
+      : config.partySizes;
 
   useEffect(() => {
     if (selectedGame !== "leagueoflegends") return;
@@ -218,6 +247,8 @@ function MatchSetting() {
             ? "UN_RANKED"
             : `${tier.charAt(0)}${tier.slice(1).toLowerCase()}${division ? ` ${division}` : ""}`;
         setSelectedRank(formattedTier);
+        setPrimaryLine(fromBackendPosition(profile.lol_profile.primary_position));
+        setSecondaryLine(fromBackendPosition(profile.lol_profile.secondary_position));
       })
       .catch(() => undefined);
 
@@ -273,6 +304,21 @@ function MatchSetting() {
   };
 
   const handleSubmit = async () => {
+    if (selectedGame === "leagueoflegends" && !primaryLine) {
+      alert("주 라인을 선택해주세요.");
+      return;
+    }
+
+    try {
+      if (!(await hasRegisteredGameAccount(selectedGame))) {
+        alert(GAME_ACCOUNT_REQUIRED_MESSAGE);
+        return;
+      }
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "게임 계정 정보를 확인하지 못했습니다.");
+      return;
+    }
+
     if (selectedGame !== "leagueoflegends") {
       alert("현재 백엔드는 리그 오브 레전드 매칭만 지원합니다.");
       return;
@@ -285,7 +331,10 @@ function MatchSetting() {
         game: selectedGame,
         tier: selectedRank,
         partySize,
-        option,
+        mode: lolMode,
+        primaryPosition: primaryLine,
+        secondaryPosition: secondaryLine,
+        option: selectedGame === "leagueoflegends" ? primaryLine : option,
       };
 
       sessionStorage.setItem("matchCriteria", JSON.stringify(matchCriteria));
@@ -293,8 +342,8 @@ function MatchSetting() {
       const profile = await api.getProfileMe();
 
       await api.updateGameSettings({
-        primary_position: toBackendPosition(option),
-        secondary_position: "ANYTHING",
+        primary_position: toBackendPosition(primaryLine),
+        secondary_position: secondaryLine ? toBackendPosition(secondaryLine) : "ANYTHING",
         play_styles: profile.lol_profile?.play_styles ?? [],
       });
 
@@ -306,6 +355,23 @@ function MatchSetting() {
     } finally {
       setIsSubmitting(false);
     }
+  };
+
+  const handleLineSelect = (position: string) => {
+    if (nextLineTarget === "primary") {
+      setPrimaryLine(position);
+      if (position === secondaryLine) setSecondaryLine("");
+      setNextLineTarget("secondary");
+      return;
+    }
+
+    if (position === primaryLine) {
+      alert("주 라인과 부 라인은 다른 포지션을 선택해주세요.");
+      return;
+    }
+
+    setSecondaryLine(position);
+    setNextLineTarget("primary");
   };
 
   return (
@@ -323,9 +389,29 @@ function MatchSetting() {
         </div>
       </section>
 
+      {selectedGame === "leagueoflegends" ? (
+        <section className="match-setting-section match-setting-section--mode">
+          <p className="match-setting-label">게임 모드</p>
+          <select
+            className="match-setting-select match-setting-select--mode"
+            value={lolMode}
+            onChange={(event) => {
+              const nextMode = event.target.value as (typeof lolModes)[number];
+              setLolMode(nextMode);
+              if (nextMode === "솔랭" && partySize > 2) setPartySize(1);
+            }}
+            aria-label="리그 오브 레전드 게임 모드"
+          >
+            {lolModes.map((mode) => (
+              <option key={mode} value={mode}>{mode}</option>
+            ))}
+          </select>
+        </section>
+      ) : null}
+
       <section className="match-setting-section match-setting-section--people">
         <p className="match-setting-label">
-          매칭 인원 선택 <span className="match-setting-required">*</span>
+          현재 파티 인원 <span className="match-setting-required">*</span>
         </p>
         <div className="match-setting-under-line" />
         <div className="match-setting-people-row">
@@ -333,9 +419,9 @@ function MatchSetting() {
             className="match-setting-select match-setting-select--people"
             value={partySize}
             onChange={(event) => setPartySize(Number(event.target.value))}
-            aria-label="매칭 인원"
+            aria-label="현재 파티 인원"
           >
-            {config.partySizes.map((size) => (
+            {availablePartySizes.map((size) => (
               <option key={size} value={size}>
                 {size}
               </option>
@@ -347,15 +433,44 @@ function MatchSetting() {
 
       {config.options.length > 0 ? (
         <section className="match-setting-section match-setting-section--position">
-          <p className="match-setting-label">{config.optionLabel}</p>
+          {selectedGame === "leagueoflegends" ? (
+            <div className="match-setting-position-heading">
+              <p className="match-setting-label">{config.optionLabel}</p>
+              <div className="match-setting-line-keys" aria-label="주 라인과 부 라인 표시">
+                <span className="match-setting-line-key">
+                  <span className="match-setting-line-key__square match-setting-line-key__square--primary" />
+                  : 주 라인
+                </span>
+                <span className="match-setting-line-key">
+                  <span className="match-setting-line-key__square match-setting-line-key__square--secondary" />
+                  : 부 라인
+                </span>
+              </div>
+            </div>
+          ) : (
+            <p className="match-setting-label">{config.optionLabel}</p>
+          )}
           <div className="match-setting-position-row">
             {config.options.map((item) => (
               <button
                 key={item}
                 type="button"
-                className="match-setting-position"
-                onClick={() => setOption(item)}
-                aria-pressed={option === item}
+                className={`match-setting-position${
+                  selectedGame === "leagueoflegends" && primaryLine === item
+                    ? " match-setting-position--primary"
+                    : selectedGame === "leagueoflegends" && secondaryLine === item
+                      ? " match-setting-position--secondary"
+                      : ""
+                }`}
+                onClick={() =>
+                  selectedGame === "leagueoflegends" ? handleLineSelect(item) : setOption(item)
+                }
+                aria-pressed={selectedGame === "leagueoflegends" ? primaryLine === item : option === item}
+                aria-label={
+                  selectedGame === "leagueoflegends"
+                    ? `${item} ${primaryLine === item ? "주 라인" : secondaryLine === item ? "부 라인" : "선택"}`
+                    : item
+                }
               >
                 {item}
               </button>

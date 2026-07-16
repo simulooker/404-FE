@@ -49,7 +49,7 @@ function Settings() {
           className="settings-item"
           onClick={() => navigate("/settings/game-accounts")}
         >
-          <span>게임 아이디 등록</span>
+          <span>게임 아이디 설정</span>
           <strong>›</strong>
         </button>
         <button type="button" className="settings-item" onClick={handleLogout}>

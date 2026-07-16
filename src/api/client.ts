@@ -27,6 +27,10 @@ export type TokenResponse = {
   token_type: string;
 };
 
+export type MessageResponse = {
+  message: string;
+};
+
 export type ProfileMeResponse = {
   id: number;
   email: string;
@@ -63,7 +67,6 @@ export type GameSettingsUpdate = {
   secondary_position: string;
   play_styles: string[];
   riot_id?: string | null;
-  riot_verification_code?: string | null;
   sync_tier_from_riot?: boolean;
 };
 
@@ -245,7 +248,7 @@ export const api = {
     });
   },
   register(payload: RegisterRequest) {
-    return apiRequest<ProfileMeResponse>("/auth/register", {
+    return apiRequest<MessageResponse>("/auth/register", {
       method: "POST",
       body: payload,
       auth: false,
@@ -266,10 +269,15 @@ export const api = {
       body: payload,
     });
   },
-  syncRiotProfile(riotId: string, verificationCode: string) {
+  syncRiotProfile(riotId: string) {
     return apiRequest<ProfileMeResponse>("/profile/riot/sync", {
       method: "POST",
-      body: { riot_id: riotId, verification_code: verificationCode },
+      body: { riot_id: riotId },
+    });
+  },
+  refreshRiotTier() {
+    return apiRequest<ProfileMeResponse>("/profile/riot/refresh", {
+      method: "POST",
     });
   },
   joinQueue() {

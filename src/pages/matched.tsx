@@ -77,8 +77,6 @@ const demoMembers: MatchMemberSummary[] = [
   },
 ];
 
-type ResultType = "win" | "lose";
-
 function isAccepted(status: string) {
   return ["accepted", "accept", "ACCEPTED", "수락"].includes(status);
 }
@@ -202,49 +200,11 @@ function Matched() {
     }
   };
 
-  const goToResultFade = async (result: ResultType) => {
-    if (isResponding) return;
-
-    setIsResponding(true);
-
-    try {
-      if (matchId) {
-        await api.completeMatch(matchId);
-      }
-
-      const matchQuery = matchId ? `&matchId=${matchId}` : "";
-      navigate(`/game-result-fade?game=${selectedGame}&result=${result}${matchQuery}`);
-    } catch (error) {
-      alert(error instanceof Error ? error.message : "게임 완료 처리에 실패했습니다.");
-      setIsResponding(false);
-    }
-  };
-
   return (
     <main className="content matched-page">
       <header className="matched-header">
         <div className="matched-title-row">
           <h1>{allAccepted ? "준비 완료" : "매칭 완료!"}</h1>
-          {allAccepted ? (
-            <div className="matched-temp-actions">
-              <button
-                className="matched-temp-done"
-                type="button"
-                disabled={isResponding}
-                onClick={() => goToResultFade("win")}
-              >
-                임시 승리
-              </button>
-              <button
-                className="matched-temp-done matched-temp-done--lose"
-                type="button"
-                disabled={isResponding}
-                onClick={() => goToResultFade("lose")}
-              >
-                임시 패배
-              </button>
-            </div>
-          ) : null}
         </div>
         <p>{allAccepted ? "모든 팀원이 수락을 완료했어요" : "함께 플레이할 팀원을 찾았어요"}</p>
       </header>

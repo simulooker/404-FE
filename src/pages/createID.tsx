@@ -3,14 +3,16 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import logo from "../assets/mascot.png";
+import { jnuAcademics, jnuColleges, type JnuCollege } from "../data/jnuAcademics";
 
 function CreateID() {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [nickname, setNickname] = useState("");
-  const [college, setCollege] = useState("");
+  const [college, setCollege] = useState<JnuCollege | "">("");
   const [department, setDepartment] = useState("");
   const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async () => {
@@ -19,7 +21,8 @@ function CreateID() {
       !nickname.trim() ||
       !college.trim() ||
       !department.trim() ||
-      !password.trim()
+      !password.trim() ||
+      !passwordConfirm.trim()
     ) {
       alert("이메일, 닉네임, 단과대학, 학부(과), 비밀번호를 모두 입력해주세요.");
       return;
@@ -27,6 +30,16 @@ function CreateID() {
 
     if (password.length < 8) {
       alert("비밀번호는 8자 이상 입력해주세요.");
+      return;
+    }
+
+    if (!/[a-z]/.test(password) || !/\d/.test(password) || !/[!@#$%^&*(),./?]/.test(password)) {
+      alert("비밀번호에는 영문 소문자, 숫자, 특수문자를 각각 하나 이상 포함해주세요.");
+      return;
+    }
+
+    if (password !== passwordConfirm) {
+      alert("비밀번호와 비밀번호 재입력이 일치하지 않습니다.");
       return;
     }
 
@@ -78,26 +91,50 @@ function CreateID() {
             onChange={(event) => setNickname(event.target.value)}
             style={inputStyle}
           />
-          <input
-            type="text"
-            placeholder="단과대학 (예: 공과대학)"
+          <select
             value={college}
-            onChange={(event) => setCollege(event.target.value)}
+            onChange={(event) => {
+              setCollege(event.target.value as JnuCollege | "");
+              setDepartment("");
+            }}
             style={inputStyle}
-          />
-          <input
-            type="text"
-            placeholder="학부(과) (예: 소프트웨어공학과)"
+            aria-label="단과대학 선택"
+          >
+            <option value="">단과대학 선택</option>
+            {jnuColleges.map((item) => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
+          <select
             value={department}
             onChange={(event) => setDepartment(event.target.value)}
             style={inputStyle}
-          />
+            aria-label="학부 또는 학과 선택"
+            disabled={!college}
+          >
+            <option value="">학부(과) 선택</option>
+            {college
+              ? jnuAcademics[college].map((item) => (
+                  <option key={item} value={item}>{item}</option>
+                ))
+              : null}
+          </select>
           <input
             type="password"
             placeholder="비밀번호"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             style={inputStyle}
+          />
+          <input
+            type="password"
+            placeholder="비밀번호 재입력"
+            value={passwordConfirm}
+            onChange={(event) => setPasswordConfirm(event.target.value)}
+            style={inputStyle}
+            onKeyDown={(event) => {
+              if (event.key === "Enter") void handleSubmit();
+            }}
           />
 
           <button type="button" className="gradient-btn" onClick={handleSubmit} disabled={isLoading}>

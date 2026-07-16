@@ -3,6 +3,11 @@ import leagueImg from "../assets/gamechoice/leagueoflegends.png";
 import valorantImg from "../assets/gamechoice/valorant.png";
 import battlegroundImg from "../assets/gamechoice/battleground.png";
 import fifaImg from "../assets/gamechoice/fifa.png";
+import {
+  GAME_ACCOUNT_REQUIRED_MESSAGE,
+  hasRegisteredGameAccount,
+  type GameId,
+} from "../utils/gameAccounts";
 
 const games = [
   { id: "leagueoflegends", name: "LEAGUE OF LEGENDS", image: leagueImg },
@@ -13,6 +18,18 @@ const games = [
 
 function GameChoice() {
   const navigate = useNavigate();
+
+  const handleGameSelect = async (gameId: GameId) => {
+    try {
+      if (!(await hasRegisteredGameAccount(gameId))) {
+        alert(GAME_ACCOUNT_REQUIRED_MESSAGE);
+        return;
+      }
+      navigate(`/match-setting?game=${gameId}`);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "게임 계정 정보를 확인하지 못했습니다.");
+    }
+  };
 
   return (
     <main className="content gamechoice-page">
@@ -30,7 +47,7 @@ function GameChoice() {
             key={game.name}
             type="button"
             className="gamechoice-card"
-            onClick={() => navigate(`/match-setting?game=${game.id}`)}
+            onClick={() => void handleGameSelect(game.id as GameId)}
             aria-label={game.name}
           >
             <img src={game.image} alt="" className="gamechoice-image" />
@@ -41,7 +58,7 @@ function GameChoice() {
       <button
         type="button"
         className="gamechoice-next"
-        onClick={() => navigate("/match-setting?game=leagueoflegends")}
+        onClick={() => void handleGameSelect("leagueoflegends")}
         aria-label="다음"
       >
         →
