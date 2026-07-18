@@ -1,12 +1,17 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { api } from "../api/client";
+import { api, type QueueGameMode } from "../api/client";
 import {
   GAME_ACCOUNT_REQUIRED_MESSAGE,
   hasRegisteredGameAccount,
 } from "../utils/gameAccounts";
 
 const lolModes = ["솔랭", "자랭", "칼바람"] as const;
+const lolModeToQueueGameMode: Record<(typeof lolModes)[number], QueueGameMode> = {
+  "솔랭": "SOLO",
+  "자랭": "FLEX",
+  "칼바람": "Howling Abyss",
+};
 const lolPositions = ["미드", "탑", "정글", "원딜", "서폿"] as const;
 
 type NextLineTarget = "primary" | "secondary";
@@ -347,7 +352,7 @@ function MatchSetting() {
         play_styles: profile.lol_profile?.play_styles ?? [],
       });
 
-      const queue = await api.joinQueue();
+      const queue = await api.joinQueue({ game_mode: lolModeToQueueGameMode[lolMode] });
       const matchingPath = `/matching?game=${selectedGame}&queueId=${queue.id}`;
       navigate(matchingPath);
     } catch (error) {

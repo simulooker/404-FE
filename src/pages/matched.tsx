@@ -4,6 +4,7 @@ import {
   api,
   type AcceptStatusResponse,
   type MatchMemberSummary,
+  type QueueGameMode,
 } from "../api/client";
 import discordIcon from "../assets/matched/discord.png";
 import micIcon from "../assets/matched/mic.png";
@@ -81,6 +82,19 @@ function isAccepted(status: string) {
   return ["accepted", "accept", "ACCEPTED", "수락"].includes(status);
 }
 
+function getSavedQueueGameMode(): QueueGameMode {
+  try {
+    const mode = JSON.parse(sessionStorage.getItem("matchCriteria") ?? "{}").mode;
+
+    if (mode === "자랭") return "FLEX";
+    if (mode === "칼바람") return "Howling Abyss";
+  } catch {
+    // 저장된 매칭 조건을 읽지 못하면 솔로 랭크로 다시 대기합니다.
+  }
+
+  return "SOLO";
+}
+
 function Matched() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -94,30 +108,27 @@ function Matched() {
   const isReturningToQueue = useRef(false);
   const allAccepted = acceptStatus?.all_accepted ?? demoAccepted;
 
-  const returnToQueueAfterDecline = useCallback(async () => {
+  const returnToQueueAfterOtherDecline = useCallback(async () => {
     if (isReturningToQueue.current) return;
 
     isReturningToQueue.current = true;
     alert("다른 사용자가 매칭을 거절했습니다. 다시 대기열을 찾습니다.");
 
     try {
-      await new Promise((resolve) => window.setTimeout(resolve, 500));
       let queueStatus = await api.getQueueStatus();
 
       if (!queueStatus.in_queue) {
-        try {
-          await api.joinQueue();
-        } catch {
-          queueStatus = await api.getQueueStatus();
+        await api.joinQueue({ game_mode: getSavedQueueGameMode() });
+        queueStatus = await api.getQueueStatus();
+      }
 
-          if (!queueStatus.in_queue) {
-            throw new Error("대기열 재참가에 실패했습니다.");
-          }
-        }
+      if (!queueStatus.in_queue) {
+        throw new Error("대기열 재참가에 실패했습니다.");
       }
 
       navigate(`/matching?game=${selectedGame}`, { replace: true });
     } catch (error) {
+      isReturningToQueue.current = false;
       alert(error instanceof Error ? error.message : "대기열 재참가에 실패했습니다.");
       navigate("/home", { replace: true });
     }
@@ -126,19 +137,17 @@ function Matched() {
   const loadMatchData = useCallback(async () => {
     if (!matchId) return;
 
-    const [memberData, statusData] = await Promise.all([
-      api.getMatchMembers(matchId),
-      api.getAcceptStatus(matchId),
-    ]);
+    const statusData = await api.getAcceptStatus(matchId);
 
     if (statusData.declined_count > 0) {
-      void returnToQueueAfterDecline();
+      void returnToQueueAfterOtherDecline();
       return;
     }
 
+    const memberData = await api.getMatchMembers(matchId);
     setMembers(memberData.members);
     setAcceptStatus(statusData);
-  }, [matchId, returnToQueueAfterDecline]);
+  }, [matchId, returnToQueueAfterOtherDecline]);
 
   useEffect(() => {
     if (!matchId) return;
@@ -155,6 +164,17 @@ function Matched() {
       window.clearInterval(pollingId);
     };
   }, [loadMatchData, matchId]);
+
+  useEffect(() => {
+    if (!allAccepted) return;
+
+    const matchQuery = matchId ? `&matchId=${matchId}` : "";
+    const redirectId = window.setTimeout(() => {
+      navigate(`/quick-messages?game=${selectedGame}${matchQuery}`, { replace: true });
+    }, 400);
+
+    return () => window.clearTimeout(redirectId);
+  }, [allAccepted, matchId, navigate, selectedGame]);
 
   const handleAccept = async () => {
     if (isResponding) return;
@@ -183,7 +203,7 @@ function Matched() {
     if (isResponding) return;
 
     if (!matchId) {
-      alert("거절되었습니다.");
+      alert("매칭이 취소되었습니다.");
       navigate("/home");
       return;
     }
@@ -192,10 +212,17 @@ function Matched() {
 
     try {
       await api.declineMatch(matchId);
-      alert("거절되었습니다.");
+      alert("매칭이 취소되었습니다.");
       navigate("/home", { replace: true });
     } catch (error) {
-      alert(error instanceof Error ? error.message : "매칭 거절에 실패했습니다.");
+      const message = error instanceof Error ? error.message : "";
+
+      if (message.includes("cancelled") || message.includes("취소")) {
+        void returnToQueueAfterOtherDecline();
+        return;
+      }
+
+      alert(message || "매칭 거절에 실패했습니다.");
       setIsResponding(false);
     }
   };
@@ -252,7 +279,7 @@ function Matched() {
         })}
       </section>
 
-      <div className="matched-actions">
+      {!allAccepted ? <div className="matched-actions">
         <button
           className="matched-reject"
           type="button"
@@ -269,7 +296,7 @@ function Matched() {
         >
           수락
         </button>
-      </div>
+      </div> : null}
     </main>
   );
 }

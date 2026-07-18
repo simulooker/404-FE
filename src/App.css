@@ -843,6 +843,188 @@
   cursor: pointer;
 }
 
+.quick-message-page {
+  min-height: 100dvh;
+  box-sizing: border-box;
+  padding: 28px 20px calc(var(--bottom-nav-height) + 22px);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.quick-message-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quick-message-brand img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+}
+
+.quick-message-brand h1 {
+  margin: 0;
+  color: #172033;
+  font-size: 26px;
+  font-weight: 900;
+}
+
+.quick-message-brand h1 strong {
+  margin-left: 4px;
+  color: #d13fe3;
+}
+
+.quick-message-heading {
+  text-align: center;
+}
+
+.quick-message-heading p {
+  margin: 0;
+  color: #7a56df;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.quick-message-heading h2 {
+  margin: 8px 0 0;
+  color: #161b27;
+  font-size: 27px;
+  font-weight: 900;
+}
+
+.quick-message-list {
+  min-height: 0;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 4px 2px;
+  scrollbar-width: none;
+}
+
+.quick-message-list::-webkit-scrollbar {
+  display: none;
+}
+
+.quick-message-empty {
+  margin: auto 0;
+  color: #98a2b3;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.quick-message-item {
+  display: flex;
+  align-items: flex-end;
+  gap: 9px;
+  max-width: 88%;
+}
+
+.quick-message-item--mine {
+  align-self: flex-end;
+  flex-direction: row-reverse;
+}
+
+.quick-message-avatar {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  object-fit: cover;
+  background: #eef0f5;
+}
+
+.quick-message-bubble {
+  min-width: 0;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 11px 14px 9px;
+  background: #f8f9fc;
+}
+
+.quick-message-item--mine .quick-message-bubble {
+  border-color: #8a6ce8;
+  background: #e9e1ff;
+}
+
+.quick-message-bubble--invite {
+  border-style: dashed;
+}
+
+.quick-message-bubble strong {
+  display: block;
+  color: #48526b;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.quick-message-item--mine .quick-message-bubble strong,
+.quick-message-item--mine .quick-message-bubble time {
+  color: #6446b7;
+}
+
+.quick-message-bubble p {
+  margin: 5px 0 0;
+  color: #171b26;
+  font-size: 16px;
+  font-weight: 800;
+}
+
+.quick-message-bubble time {
+  display: block;
+  margin-top: 5px;
+  color: #98a2b3;
+  font-size: 11px;
+  text-align: right;
+}
+
+.quick-message-error {
+  margin: 0;
+  color: #d92d20;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.quick-message-presets {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.quick-message-presets button {
+  min-height: 46px;
+  border: 1px solid #d7c6ff;
+  border-radius: 10px;
+  padding: 8px 10px;
+  background: #fff;
+  color: #543896;
+  font-size: 14px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.quick-message-presets button:last-child {
+  grid-column: 1 / -1;
+}
+
+.quick-message-presets button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.quick-message-notice {
+  margin: 0;
+  color: #667085;
+  font-size: 13px;
+  font-weight: 700;
+  text-align: center;
+}
+
 .game-result-page {
   min-height: 100dvh;
   padding: 28px 18px 24px;
@@ -2052,18 +2234,6 @@
   font-size: 31px;
   font-weight: 900;
   padding: 0 16px;
-}
-
-.secondary-btn {
-  min-height: 44px;
-  background: white;
-  border: 1px solid #d0d5dd;
-  border-radius: 10px;
-  color: #344054;
-  padding: 12px 18px;
-  font-size: 15px;
-  font-weight: 700;
-  cursor: pointer;
 }
 
 .card {

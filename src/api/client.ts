@@ -70,6 +70,12 @@ export type GameSettingsUpdate = {
   sync_tier_from_riot?: boolean;
 };
 
+export type QueueGameMode = "SOLO" | "FLEX" | "Howling Abyss";
+
+export type QueueJoinRequest = {
+  game_mode: QueueGameMode;
+};
+
 export type QueueJoinResponse = {
   id: number;
   game: string;
@@ -96,16 +102,10 @@ export type QueueStatusResponse = {
   message: string | null;
 };
 
-export type MatchDetailResponse = {
+export type ActiveMatchResponse = {
   id: number;
   game: string;
   status: string;
-  accept_deadline: string | null;
-  created_at: string;
-  confirmed_at: string | null;
-  completed_at: string | null;
-  evaluation_deadline: string | null;
-  my_accept_status?: string | null;
 };
 
 export type MatchMemberSummary = {
@@ -120,6 +120,8 @@ export type MatchMemberSummary = {
   assigned_role: string;
   play_styles: string[] | null;
   accept_status: string;
+  riot_id?: string | null;
+  fc_online_nickname?: string | null;
 };
 
 export type MatchMembersResponse = {
@@ -144,6 +146,27 @@ export type MatchActionResponse = {
   status: string;
   my_accept_status: string;
   message: string;
+};
+
+export type QuickMessagePreset =
+  | "게임 시작할게요"
+  | "한 판 더 하실래요?"
+  | "저는 잠시 휴식할게요."
+  | "저는 여기까지 하겠습니다."
+  | "감사합니다";
+
+export type QuickMessageItem = {
+  id: number;
+  match_id: number;
+  user_id: number;
+  nickname: string;
+  message: QuickMessagePreset;
+  created_at: string;
+};
+
+export type QuickMessageListResponse = {
+  total: number;
+  items: QuickMessageItem[];
 };
 
 export type MatchEvaluationItem = {
@@ -280,9 +303,10 @@ export const api = {
       method: "POST",
     });
   },
-  joinQueue() {
+  joinQueue(payload: QueueJoinRequest) {
     return apiRequest<QueueJoinResponse>("/match/queue/join", {
       method: "POST",
+      body: payload,
     });
   },
   getQueueStatus() {
@@ -295,13 +319,10 @@ export const api = {
   },
   leaveQueueOnPageClose,
   getActiveMatch() {
-    return apiRequest<MatchDetailResponse | null>("/match/active");
+    return apiRequest<ActiveMatchResponse | null>("/match/active");
   },
   getMatchHistory(limit = 20, offset = 0) {
     return apiRequest<MatchHistoryResponse>(`/match/history?limit=${limit}&offset=${offset}`);
-  },
-  getMatch(matchId: number) {
-    return apiRequest<MatchDetailResponse>(`/match/${matchId}`);
   },
   getMatchMembers(matchId: number) {
     return apiRequest<MatchMembersResponse>(`/match/${matchId}/members`);
@@ -319,9 +340,13 @@ export const api = {
       method: "POST",
     });
   },
-  completeMatch(matchId: number) {
-    return apiRequest<MatchDetailResponse>(`/match/${matchId}/complete`, {
+  getQuickMessages(matchId: number) {
+    return apiRequest<QuickMessageListResponse>(`/match/${matchId}/quick-messages`);
+  },
+  sendQuickMessage(matchId: number, message: QuickMessagePreset) {
+    return apiRequest<QuickMessageItem>(`/match/${matchId}/quick-messages`, {
       method: "POST",
+      body: { message },
     });
   },
   evaluateMatch(matchId: number, evaluations: MatchEvaluationItem[]) {
