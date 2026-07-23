@@ -17,6 +17,7 @@ import NotificationSettings from "./pages/NotificationSettings";
 import ProfileEdit from "./pages/ProfileEdit";
 import QuickMessages from "./pages/QuickMessages";
 import Settings from "./pages/Settings";
+import EmailVerification from "./pages/EmailVerification";
 import "./App.css";
 
 function App() {
@@ -26,6 +27,7 @@ function App() {
         <Route element={<Layout />}> 
           <Route path="/" element={<Login />} />
           <Route path="/create-id" element={<CreateID />} />
+          <Route path="/verify-email" element={<EmailVerification />} />
           <Route path="/home" element={<Home />} />
           <Route path="/game-choice" element={<GameChoice />} />
           <Route path="/match-setting" element={<MatchSetting />} />

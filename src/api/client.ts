@@ -31,6 +31,11 @@ export type MessageResponse = {
   message: string;
 };
 
+export type VerifyEmailResponse = {
+  message: string;
+  is_verified: boolean;
+};
+
 export type ProfileMeResponse = {
   id: number;
   email: string;
@@ -106,6 +111,13 @@ export type ActiveMatchResponse = {
   id: number;
   game: string;
   status: string;
+};
+
+export type MatchCompleteResponse = {
+  id: number;
+  status: string;
+  completed_at: string | null;
+  result_status: string | null;
 };
 
 export type MatchMemberSummary = {
@@ -197,6 +209,25 @@ export type MatchHistoryResponse = {
   items: MatchHistoryItem[];
 };
 
+export type MyRankingResponse = {
+  user_id: number;
+  rank: number | null;
+  total_players?: number | null;
+  percentile?: number | null;
+  message?: string | null;
+};
+
+export type GameOnlineCount = {
+  game: string;
+  waiting_count: number;
+  in_match_count: number;
+  online_count: number;
+};
+
+export type OnlineCountsResponse = {
+  games: GameOnlineCount[];
+};
+
 export function getAccessToken() {
   return sessionStorage.getItem(TOKEN_KEY);
 }
@@ -277,6 +308,11 @@ export const api = {
       auth: false,
     });
   },
+  verifyEmail(token: string) {
+    return apiRequest<VerifyEmailResponse>(`/auth/verify-email?token=${encodeURIComponent(token)}`, {
+      auth: false,
+    });
+  },
   getProfileMe() {
     return apiRequest<ProfileMeResponse>("/profile/me");
   },
@@ -324,6 +360,12 @@ export const api = {
   getMatchHistory(limit = 20, offset = 0) {
     return apiRequest<MatchHistoryResponse>(`/match/history?limit=${limit}&offset=${offset}`);
   },
+  getMyRanking() {
+    return apiRequest<MyRankingResponse>("/ranking/me");
+  },
+  getOnlineCounts() {
+    return apiRequest<OnlineCountsResponse>("/match/online");
+  },
   getMatchMembers(matchId: number) {
     return apiRequest<MatchMembersResponse>(`/match/${matchId}/members`);
   },
@@ -347,6 +389,11 @@ export const api = {
     return apiRequest<QuickMessageItem>(`/match/${matchId}/quick-messages`, {
       method: "POST",
       body: { message },
+    });
+  },
+  completeMatch(matchId: number) {
+    return apiRequest<MatchCompleteResponse>(`/match/${matchId}/complete`, {
+      method: "POST",
     });
   },
   evaluateMatch(matchId: number, evaluations: MatchEvaluationItem[]) {

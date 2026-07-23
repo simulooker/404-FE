@@ -1017,12 +1017,85 @@
   cursor: default;
 }
 
-.quick-message-notice {
-  margin: 0;
-  color: #667085;
-  font-size: 13px;
-  font-weight: 700;
+.quick-message-complete {
+  min-height: 48px;
+  border: 1px solid #e4e7ec;
+  border-radius: 12px;
+  background: #fff;
+  color: #475467;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.quick-message-complete:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.email-verification-page {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  box-sizing: border-box;
+  padding: 28px;
+  background: #fff;
+}
+
+.email-verification-content {
+  width: min(100%, 340px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
+}
+
+.email-verification-logo {
+  width: 78px;
+  height: 78px;
+  object-fit: contain;
+}
+
+.email-verification-label {
+  margin: 12px 0 0;
+  color: #7a56df;
+  font-size: 16px;
+  font-weight: 900;
+}
+
+.email-verification-content h1 {
+  margin: 18px 0 0;
+  color: #172033;
+  font-size: 28px;
+  font-weight: 900;
+}
+
+.email-verification-message {
+  margin: 12px 0 0;
+  color: #667085;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.email-verification-spinner {
+  width: 32px;
+  height: 32px;
+  margin-top: 26px;
+  border: 4px solid #e7e0fb;
+  border-top-color: #7a56df;
+  border-radius: 50%;
+  animation: emailVerificationSpin 0.8s linear infinite;
+}
+
+.email-verification-login {
+  margin-top: 30px;
+}
+
+@keyframes emailVerificationSpin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .game-result-page {

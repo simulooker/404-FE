@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   api,
   type MatchMemberSummary,
@@ -47,6 +47,7 @@ function formatMessageTime(createdAt: string) {
 }
 
 function QuickMessages() {
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedGame = searchParams.get("game") ?? "leagueoflegends";
   const matchIdParam = searchParams.get("matchId");
@@ -55,6 +56,7 @@ function QuickMessages() {
   const [members, setMembers] = useState<MatchMemberSummary[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [isSending, setIsSending] = useState(false);
+  const [isCompleting, setIsCompleting] = useState(false);
   const [error, setError] = useState("");
 
   const isValidMatchId = useMemo(() => Boolean(matchId && Number.isFinite(matchId)), [matchId]);
@@ -151,6 +153,26 @@ function QuickMessages() {
     }
   };
 
+  const handleCompleteMatch = async () => {
+    if (!isValidMatchId || !matchId || isCompleting) {
+      setError("매칭 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    if (!window.confirm("매칭을 마치시겠습니까? 종료 후에는 채팅방으로 돌아올 수 없습니다.")) return;
+
+    setIsCompleting(true);
+
+    try {
+      await api.completeMatch(matchId);
+      alert("매칭을 종료했습니다.");
+      navigate("/home", { replace: true });
+    } catch (requestError) {
+      setError(requestError instanceof Error ? requestError.message : "매칭 종료에 실패했습니다.");
+      setIsCompleting(false);
+    }
+  };
+
   return (
     <main className="content quick-message-page">
       <header className="quick-message-brand">
@@ -200,7 +222,14 @@ function QuickMessages() {
         ))}
       </section>
 
-      <p className="quick-message-notice">채팅창은 게임이 끝날 때까지 유지됩니다.</p>
+      <button
+        className="quick-message-complete"
+        type="button"
+        disabled={isCompleting || !isValidMatchId}
+        onClick={() => void handleCompleteMatch()}
+      >
+        {isCompleting ? "매칭 종료 중..." : "매칭을 마칩니다"}
+      </button>
     </main>
   );
 }

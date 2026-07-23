@@ -13,6 +13,7 @@ function BottomNav() {
   if (
     location.pathname === "/" ||
     location.pathname === "/create-id" ||
+    location.pathname === "/verify-email" ||
     location.pathname === "/matching" ||
     location.pathname === "/matched" ||
     location.pathname === "/game-result-fade" ||
