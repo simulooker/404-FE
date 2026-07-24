@@ -2509,10 +2509,16 @@
 }
 
 .ranking-item__name-row {
+  width: 100%;
+  padding: 0;
+  border: 0;
   min-width: 0;
   display: flex;
   align-items: center;
   gap: 6px;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
 }
 
 .ranking-item__name-row strong {

@@ -55,14 +55,6 @@ function GameChoice() {
         ))}
       </section>
 
-      <button
-        type="button"
-        className="gamechoice-next"
-        onClick={() => void handleGameSelect("leagueoflegends")}
-        aria-label="다음"
-      >
-        →
-      </button>
     </main>
   );
 }

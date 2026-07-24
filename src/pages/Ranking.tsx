@@ -19,6 +19,11 @@ function Ranking() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
+  const showFullName = (entry: RankingEntry) => {
+    const riotId = entry.riot_id ? `\n롤 아이디: ${entry.riot_id}` : "";
+    alert(`닉네임: ${entry.nickname}${riotId}`);
+  };
+
   useEffect(() => {
     let isMounted = true;
 
@@ -61,10 +66,15 @@ function Ranking() {
             <strong className={`ranking-item__rank ranking-item__rank--${Math.min(entry.rank, 4)}`}>{entry.rank}</strong>
             <img src={getProfileAvatar(entry.user_id)} alt="" className="ranking-item__avatar" />
             <div className="ranking-item__profile">
-              <div className="ranking-item__name-row">
+              <button
+                type="button"
+                className="ranking-item__name-row"
+                onClick={() => showFullName(entry)}
+                aria-label={`${entry.nickname} 전체 이름 보기`}
+              >
                 <strong>{entry.nickname}</strong>
                 {entry.riot_id ? <span>{entry.riot_id}</span> : null}
-              </div>
+              </button>
               <span>{entry.primary_position}</span>
             </div>
             <span className="ranking-item__tier">{formatTier(entry)}</span>
