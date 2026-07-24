@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { api } from "../api/client";
 import homeButton from "../assets/navigationbar/homebutton.png";
@@ -9,6 +10,7 @@ import myPageButtonActive from "../assets/navigationbar/mypagebuttonactive.png";
 function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isPreparingMatch, setIsPreparingMatch] = useState(false);
 
   if (
     location.pathname === "/" ||
@@ -42,7 +44,6 @@ function BottomNav() {
         return;
       }
     } catch {
-      // 매칭 상태를 확인하지 못한 경우에도 게임 중인 채팅방을 유지합니다.
       alert("완료된 매칭이 존재합니다.");
       return;
     }
@@ -51,6 +52,10 @@ function BottomNav() {
   };
 
   const handleMainClick = async () => {
+    if (isPreparingMatch) return;
+
+    setIsPreparingMatch(true);
+
     try {
       const activeMatch = await api.getActiveMatch();
 
@@ -58,11 +63,20 @@ function BottomNav() {
         navigate(`/quick-messages?game=${activeMatch.game}&matchId=${activeMatch.id}`);
         return;
       }
-    } catch {
-      // 활성 매칭이 없거나 상태 확인에 실패하면 일반 매칭 시작 화면으로 이동합니다.
-    }
 
-    navigate("/game-choice");
+      const queueStatus = await api.getQueueStatus();
+
+      if (queueStatus.in_queue) {
+        await api.leaveQueue();
+        alert("기존 매칭 대기열에서 나왔습니다. 새 매칭 조건을 설정해 주세요.");
+      }
+
+      navigate("/game-choice");
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "기존 매칭 대기열을 정리하지 못했습니다.");
+    } finally {
+      setIsPreparingMatch(false);
+    }
   };
 
   return (
@@ -75,7 +89,13 @@ function BottomNav() {
         />
       </button>
 
-      <button type="button" className="bottom-nav__button" aria-label="매칭" onClick={() => void handleMainClick()}>
+      <button
+        type="button"
+        className="bottom-nav__button"
+        aria-label="매칭"
+        disabled={isPreparingMatch}
+        onClick={() => void handleMainClick()}
+      >
         <img src={mainButton} alt="" className="bottom-nav__icon bottom-nav__icon--main" />
       </button>
 
