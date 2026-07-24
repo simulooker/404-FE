@@ -82,6 +82,10 @@ function isAccepted(status: string) {
   return ["accepted", "accept", "ACCEPTED", "수락"].includes(status);
 }
 
+function isConfirmed(status: string | null | undefined) {
+  return ["confirmed", "confirm"].includes(status?.toLowerCase() ?? "");
+}
+
 function getSavedQueueGameMode(): QueueGameMode {
   try {
     const mode = JSON.parse(sessionStorage.getItem("matchCriteria") ?? "{}").mode;
@@ -168,12 +172,32 @@ function Matched() {
   useEffect(() => {
     if (!allAccepted) return;
 
-    const matchQuery = matchId ? `&matchId=${matchId}` : "";
-    const redirectId = window.setTimeout(() => {
-      navigate(`/quick-messages?game=${selectedGame}${matchQuery}`, { replace: true });
-    }, 400);
+    if (!matchId) {
+      navigate(`/quick-messages?game=${selectedGame}`, { replace: true });
+      return;
+    }
 
-    return () => window.clearTimeout(redirectId);
+    let isMounted = true;
+    const matchQuery = matchId ? `&matchId=${matchId}` : "";
+    const moveToChatWhenConfirmed = async () => {
+      try {
+        const activeMatch = await api.getActiveMatch();
+
+        if (isMounted && activeMatch?.id === matchId && isConfirmed(activeMatch.status)) {
+          navigate(`/quick-messages?game=${selectedGame}${matchQuery}`, { replace: true });
+        }
+      } catch {
+        // Keep the acceptance screen open until the backend status can be checked again.
+      }
+    };
+
+    void moveToChatWhenConfirmed();
+    const confirmationId = window.setInterval(() => void moveToChatWhenConfirmed(), 1000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(confirmationId);
+    };
   }, [allAccepted, matchId, navigate, selectedGame]);
 
   const handleAccept = async () => {

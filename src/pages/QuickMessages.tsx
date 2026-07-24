@@ -46,6 +46,10 @@ function formatMessageTime(createdAt: string) {
   }).format(date);
 }
 
+function isConfirmedMatchStatus(status: string | null | undefined) {
+  return ["confirmed", "confirm"].includes(status?.toLowerCase() ?? "");
+}
+
 function QuickMessages() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -153,6 +157,24 @@ function QuickMessages() {
     }
   };
 
+  useEffect(() => {
+    if (!isValidMatchId || !matchId) return;
+
+    let isMounted = true;
+
+    api.getActiveMatch()
+      .then((activeMatch) => {
+        if (!isMounted || (activeMatch && isConfirmedMatchStatus(activeMatch.status))) return;
+
+        navigate(`/matched?game=${selectedGame}&matchId=${matchId}`, { replace: true });
+      })
+      .catch(() => undefined);
+
+    return () => {
+      isMounted = false;
+    };
+  }, [isValidMatchId, matchId, navigate, selectedGame]);
+
   const handleCompleteMatch = async () => {
     if (!isValidMatchId || !matchId || isCompleting) {
       setError("매칭 정보를 찾을 수 없습니다.");
@@ -164,6 +186,14 @@ function QuickMessages() {
     setIsCompleting(true);
 
     try {
+      const activeMatch = await api.getActiveMatch();
+
+      if (!activeMatch || !isConfirmedMatchStatus(activeMatch.status)) {
+        setError("매칭 확정 처리 중입니다. 잠시 후 다시 시도해 주세요.");
+        setIsCompleting(false);
+        return;
+      }
+
       await api.completeMatch(matchId);
       alert("매칭을 종료했습니다.");
       navigate(`/game-result?matchId=${matchId}&result=win`, { replace: true });
