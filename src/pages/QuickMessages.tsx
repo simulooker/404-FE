@@ -61,6 +61,7 @@ function QuickMessages() {
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [isSending, setIsSending] = useState(false);
   const [isCompleting, setIsCompleting] = useState(false);
+  const [isMatchCompleted, setIsMatchCompleted] = useState(false);
   const [error, setError] = useState("");
 
   const isValidMatchId = useMemo(() => Boolean(matchId && Number.isFinite(matchId)), [matchId]);
@@ -86,6 +87,30 @@ function QuickMessages() {
       window.clearInterval(pollingId);
     };
   }, [loadMessages]);
+
+  useEffect(() => {
+    if (!isValidMatchId || !matchId) return;
+
+    let isMounted = true;
+
+    const checkMatchCompletion = async () => {
+      try {
+        const match = await api.getMatch(matchId);
+
+        if (isMounted) setIsMatchCompleted(match.status === "completed");
+      } catch {
+        // Keep the last known state when the match status cannot be loaded.
+      }
+    };
+
+    void checkMatchCompletion();
+    const pollingId = window.setInterval(() => void checkMatchCompletion(), 3000);
+
+    return () => {
+      isMounted = false;
+      window.clearInterval(pollingId);
+    };
+  }, [isValidMatchId, matchId]);
 
   useEffect(() => {
     if (!isValidMatchId || !matchId) return;
@@ -164,7 +189,7 @@ function QuickMessages() {
 
     api.getActiveMatch()
       .then((activeMatch) => {
-        if (!isMounted || (activeMatch && isConfirmedMatchStatus(activeMatch.status))) return;
+        if (!isMounted || !activeMatch || isConfirmedMatchStatus(activeMatch.status)) return;
 
         navigate(`/matched?game=${selectedGame}&matchId=${matchId}`, { replace: true });
       })
@@ -201,6 +226,16 @@ function QuickMessages() {
       setError(requestError instanceof Error ? requestError.message : "매칭 종료에 실패했습니다.");
       setIsCompleting(false);
     }
+  };
+
+  const handleEvaluation = () => {
+    if (!isValidMatchId || !matchId) {
+      setError("매칭 정보를 찾을 수 없습니다.");
+      return;
+    }
+
+    const returnToChatQuery = isMatchCompleted ? "" : "&from=chat";
+    navigate(`/game-result?matchId=${matchId}${returnToChatQuery}`);
   };
 
   return (
@@ -244,7 +279,7 @@ function QuickMessages() {
           <button
             key={message}
             type="button"
-            disabled={isSending || !isValidMatchId}
+            disabled={isSending || isMatchCompleted || !isValidMatchId}
             onClick={() => void handleSend(message)}
           >
             {message}
@@ -253,7 +288,20 @@ function QuickMessages() {
       </section>
 
       <button
-        className="quick-message-complete"
+        className="quick-message-evaluate"
+        type="button"
+        disabled={!isValidMatchId}
+        onClick={handleEvaluation}
+      >
+        평가하기
+      </button>
+
+      {isMatchCompleted ? (
+        <p className="quick-message-complete-notice">매칭이 끝났습니다. 평가하기를 눌러주세요.</p>
+      ) : null}
+
+      <button
+        className={`quick-message-complete${isMatchCompleted ? " quick-message-complete--hidden" : ""}`}
         type="button"
         disabled={isCompleting || !isValidMatchId}
         onClick={() => void handleCompleteMatch()}

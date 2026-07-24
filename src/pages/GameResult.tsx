@@ -41,6 +41,7 @@ function GameResult() {
   const result = searchParams.get("result") === "lose" ? "lose" : "win";
   const matchIdParam = searchParams.get("matchId");
   const matchId = matchIdParam ? Number(matchIdParam) : null;
+  const showChatBackButton = searchParams.get("from") === "chat";
   const [teammates, setTeammates] = useState<Teammate[]>(demoTeammates);
   const [ratings, setRatings] = useState<Record<string, number>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -112,6 +113,12 @@ function GameResult() {
 
   return (
     <main className="content game-result-page">
+      {showChatBackButton ? (
+        <button type="button" className="game-result-back" aria-label="채팅창으로 돌아가기" onClick={() => navigate(-1)}>
+          ←
+        </button>
+      ) : null}
+
       <section className="game-result-brand">
         <div className="game-result-brand__mark">
           <img src={justLogo} alt="GameMatch 로고" />

@@ -384,6 +384,9 @@ export const api = {
   getActiveMatch() {
     return apiRequest<ActiveMatchResponse | null>("/match/active");
   },
+  getMatch(matchId: number) {
+    return apiRequest<ActiveMatchResponse>(`/match/${matchId}`);
+  },
   getMatchHistory(limit = 20, offset = 0) {
     return apiRequest<MatchHistoryResponse>(`/match/history?limit=${limit}&offset=${offset}`);
   },

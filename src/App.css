@@ -1044,9 +1044,44 @@
   cursor: pointer;
 }
 
+.quick-message-evaluate {
+  min-height: 48px;
+  margin-top: -10px;
+  border: 1px solid #aa78e9;
+  border-radius: 12px;
+  background: #fff;
+  color: #6d42c3;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.quick-message-evaluate:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
 .quick-message-complete:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.quick-message-complete--hidden {
+  display: none;
+}
+
+.quick-message-complete-notice {
+  min-height: 48px;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 14px 16px;
+  border: 1px solid #c4b5fd;
+  border-radius: 12px;
+  background: #f5f3ff;
+  color: #5b21b6;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: center;
 }
 
 .email-verification-page {
@@ -1115,12 +1150,29 @@
 }
 
 .game-result-page {
+  position: relative;
   min-height: 100dvh;
   padding: 28px 18px 24px;
   box-sizing: border-box;
   overflow: hidden;
   display: flex;
   flex-direction: column;
+}
+
+.game-result-back {
+  position: absolute;
+  top: 26px;
+  right: 18px;
+  z-index: 1;
+  width: 38px;
+  height: 38px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: #172033;
+  font-size: 30px;
+  line-height: 1;
+  cursor: pointer;
 }
 
 .game-result-fade-page {
