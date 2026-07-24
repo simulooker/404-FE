@@ -1322,6 +1322,12 @@
   line-height: 1;
 }
 
+/* 게임 결과의 승패와 점수는 표시하지 않고 평가 화면만 보여줍니다. */
+.game-result-fade-score,
+.game-result-score {
+  display: none;
+}
+
 .game-result-ratings {
   display: flex;
   flex-direction: column;

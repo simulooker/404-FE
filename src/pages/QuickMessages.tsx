@@ -166,7 +166,7 @@ function QuickMessages() {
     try {
       await api.completeMatch(matchId);
       alert("매칭을 종료했습니다.");
-      navigate("/home", { replace: true });
+      navigate(`/game-result?matchId=${matchId}&result=win`, { replace: true });
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "매칭 종료에 실패했습니다.");
       setIsCompleting(false);
