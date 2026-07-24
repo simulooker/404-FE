@@ -217,6 +217,26 @@ export type MyRankingResponse = {
   message?: string | null;
 };
 
+export type RankingEntry = {
+  rank: number;
+  user_id: number;
+  nickname: string;
+  manner_score: number;
+  tier: string;
+  tier_rank: number;
+  primary_position: string;
+  rank_division: string | null;
+  league_points: number | null;
+  riot_id?: string | null;
+};
+
+export type RankingListResponse = {
+  total: number;
+  limit: number;
+  offset: number;
+  items: RankingEntry[];
+};
+
 export type GameOnlineCount = {
   game: string;
   waiting_count: number;
@@ -362,6 +382,11 @@ export const api = {
   },
   getMyRanking() {
     return apiRequest<MyRankingResponse>("/ranking/me");
+  },
+  getLolRanking(limit = 100, offset = 0) {
+    return apiRequest<RankingListResponse>(
+      `/ranking/lol?limit=${limit}&offset=${offset}`,
+    );
   },
   getOnlineCounts() {
     return apiRequest<OnlineCountsResponse>("/match/online");

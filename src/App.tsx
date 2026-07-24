@@ -16,6 +16,7 @@ import MyPage from "./pages/MyPage";
 import NotificationSettings from "./pages/NotificationSettings";
 import ProfileEdit from "./pages/ProfileEdit";
 import QuickMessages from "./pages/QuickMessages";
+import Ranking from "./pages/Ranking";
 import Settings from "./pages/Settings";
 import EmailVerification from "./pages/EmailVerification";
 import "./App.css";
@@ -29,6 +30,7 @@ function App() {
           <Route path="/create-id" element={<CreateID />} />
           <Route path="/verify-email" element={<EmailVerification />} />
           <Route path="/home" element={<Home />} />
+          <Route path="/ranking" element={<Ranking />} />
           <Route path="/game-choice" element={<GameChoice />} />
           <Route path="/match-setting" element={<MatchSetting />} />
           <Route path="/matching" element={<Matching />} />

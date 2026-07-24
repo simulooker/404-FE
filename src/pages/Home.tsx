@@ -26,12 +26,6 @@ const onlineGameKeys: Record<GameId, string> = {
   fifa: "fc_online",
 };
 
-function getRankLabel(gameId: GameId, rank: number | null, isLoading: boolean) {
-  if (gameId !== "leagueoflegends") return "랭킹 정보 없음";
-  if (isLoading) return "순위 불러오는 중";
-  return rank ? `랭킹 ${rank}위` : "랭킹 정보 없음";
-}
-
 function getRequestFailureLabel(error: unknown, fallback: string) {
   const message = error instanceof Error ? error.message.toLowerCase() : "";
 
@@ -44,37 +38,9 @@ function getRequestFailureLabel(error: unknown, fallback: string) {
 
 function Home() {
   const navigate = useNavigate();
-  const [myRank, setMyRank] = useState<number | null>(null);
-  const [isRankingLoading, setIsRankingLoading] = useState(true);
-  const [rankingError, setRankingError] = useState<string | null>(null);
   const [onlineCounts, setOnlineCounts] = useState<Record<string, number> | null>(null);
   const [isOnlineLoading, setIsOnlineLoading] = useState(true);
   const [onlineError, setOnlineError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    api.getMyRanking()
-      .then((response) => {
-        if (isMounted) {
-          setMyRank(response.rank);
-          setRankingError(null);
-        }
-      })
-      .catch((error) => {
-        if (isMounted) {
-          setMyRank(null);
-          setRankingError(getRequestFailureLabel(error, "랭킹 정보 없음"));
-        }
-      })
-      .finally(() => {
-        if (isMounted) setIsRankingLoading(false);
-      });
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -123,58 +89,19 @@ function Home() {
   };
 
   return (
-    <main className="content" style={{ padding: "20px" }}>
-      <header
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          marginBottom: "18px",
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "0px" }}>
-          <img
-            src={justLogo}
-            alt="GameLink 로고"
-            style={{
-              marginLeft: "-20px",
-              width: "100px",
-              height: "100px",
-              objectFit: "contain",
-            }}
-          />
-          <h1 style={{ marginLeft: "-20px", fontSize: "30px", fontWeight: 800, lineHeight: 1 }}>
-            <span style={{ color: "#111827" }}>Game</span>
-            <span
-              style={{
-                background: "linear-gradient(90deg, #6b5cff 0%, #ff6bd6 100%)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
-              }}
-            >
-              Link
-            </span>
-          </h1>
+    <main className="content home-page">
+      <header className="home-header">
+        <div className="home-brand">
+          <img src={justLogo} alt="GameLink 로고" />
+          <h1><span>Game</span><strong>Link</strong></h1>
         </div>
-
-        <p style={{ margin: "12px 10px 0", fontSize: "24px", fontWeight: 700 }}>
-          오늘은 무슨 게임을 하실건가요?
-        </p>
+        <p>오늘은 무슨 게임을 하실건가요?</p>
       </header>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-          gap: "14px",
-        }}
-      >
+      <section className="home-game-grid" aria-label="게임 선택">
         {games.map((game) => {
           const gameId = game.id as GameId;
-          const isFifa = gameId === "fifa";
           const onlineCount = onlineCounts?.[onlineGameKeys[gameId]];
-          const rankLabel = rankingError ?? getRankLabel(gameId, myRank, isRankingLoading);
           const onlineLabel = isOnlineLoading
             ? "인원 불러오는 중"
             : onlineError ?? `${onlineCount ?? 0}명 플레이 중`;
@@ -182,88 +109,26 @@ function Home() {
           return (
             <button
               key={game.name}
-              className="card"
+              className="home-game-card"
               type="button"
               onClick={() => void handleGameSelect(gameId)}
-              style={{
-                width: "100%",
-                aspectRatio: "1 / 1",
-                position: "relative",
-                borderRadius: "16px",
-                overflow: "hidden",
-                border: "none",
-                padding: 0,
-                cursor: "pointer",
-                marginBottom: 0,
-              }}
             >
-              <div
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  backgroundImage: `url(${game.image})`,
-                  backgroundSize: "cover",
-                  backgroundPosition: isFifa ? "center top" : "center",
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  zIndex: 1,
-                }}
+              <img
+                src={game.image}
+                alt=""
+                className={`home-game-card__image${gameId === "fifa" ? " home-game-card__image--fifa" : ""}`}
               />
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: "linear-gradient(rgba(0,0,0,0.08), rgba(0,0,0,0.65))",
-                  zIndex: 2,
-                }}
-              />
-              <div
-                style={{
-                  position: "relative",
-                  zIndex: 3,
-                  height: "100%",
-                  boxSizing: "border-box",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  padding: "14px 9px",
-                  textAlign: "left",
-                }}
-              >
-                <span
-                  style={{
-                    display: "block",
-                    color: "white",
-                    fontSize: "15px",
-                    fontWeight: 800,
-                    textShadow: "0 1px 8px rgba(0,0,0,0.35)",
-                  }}
-                >
-                  {game.name}
-                </span>
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    gap: "2px",
-                    color: "rgba(255,255,255,0.9)",
-                    fontSize: "12px",
-                    fontWeight: 800,
-                    lineHeight: 1.2,
-                    textShadow: "0 1px 8px rgba(0,0,0,0.45)",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  <span>{rankLabel}</span>
-                  <span>{onlineLabel}</span>
-                </div>
-              </div>
+              <span className="home-game-card__shade" />
+              <span className="home-game-card__name">{game.name}</span>
+              <span className="home-game-card__online">{onlineLabel}</span>
             </button>
           );
         })}
-      </div>
+      </section>
+
+      <button className="gradient-btn home-ranking-button" type="button" onClick={() => navigate("/ranking")}>
+        랭킹 보기
+      </button>
     </main>
   );
 }
