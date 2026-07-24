@@ -46,7 +46,7 @@ function CreateID() {
     setIsLoading(true);
 
     try {
-      await api.register({
+      const response = await api.register({
         email: email.trim(),
         nickname: nickname.trim(),
         password,
@@ -54,7 +54,7 @@ function CreateID() {
         department: department.trim(),
       });
 
-      alert("가입 요청이 완료됐어요. 이메일 인증 후 로그인해주세요.");
+      alert(response.message);
       navigate("/", { replace: true });
     } catch (error) {
       alert(error instanceof Error ? error.message : "아이디 만들기에 실패했습니다.");

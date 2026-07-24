@@ -328,6 +328,13 @@ export const api = {
       auth: false,
     });
   },
+  resendVerification(email: string) {
+    return apiRequest<MessageResponse>("/auth/resend-verification", {
+      method: "POST",
+      body: { email },
+      auth: false,
+    });
+  },
   verifyEmail(token: string) {
     return apiRequest<VerifyEmailResponse>(`/auth/verify-email?token=${encodeURIComponent(token)}`, {
       auth: false,

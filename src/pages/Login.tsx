@@ -9,6 +9,7 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
   const handleLogin = async () => {
     if (!email.trim() || !password.trim()) {
@@ -30,6 +31,24 @@ function Login() {
       alert(error instanceof Error ? error.message : "로그인에 실패했습니다.");
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    if (!email.trim()) {
+      alert("인증 메일을 받을 이메일을 먼저 입력해 주세요.");
+      return;
+    }
+
+    setIsResending(true);
+
+    try {
+      const response = await api.resendVerification(email.trim());
+      alert(response.message);
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "인증 메일 재발송에 실패했습니다.");
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -73,6 +92,14 @@ function Login() {
           onClick={() => navigate("/create-id")}
         >
           회원가입 하기
+        </button>
+        <button
+          type="button"
+          style={resendButtonStyle}
+          disabled={isResending}
+          onClick={() => void handleResendVerification()}
+        >
+          {isResending ? "인증 메일 재발송 중..." : "인증 메일 재발송"}
         </button>
       </section>
     </main>
@@ -127,6 +154,16 @@ const helperTextStyle: CSSProperties = {
   marginTop: "18px",
   fontSize: "12px",
   color: "#98A2B3",
+  border: "none",
+  backgroundColor: "transparent",
+  cursor: "pointer",
+  padding: 0,
+};
+
+const resendButtonStyle: CSSProperties = {
+  marginTop: "10px",
+  fontSize: "12px",
+  color: "#667085",
   border: "none",
   backgroundColor: "transparent",
   cursor: "pointer",
