@@ -99,6 +99,13 @@ function getSavedQueueGameMode(): QueueGameMode {
   return "SOLO";
 }
 
+function formatRemainingTime(totalSeconds: number) {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  return `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+}
+
 function Matched() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
@@ -109,8 +116,12 @@ function Matched() {
   const [acceptStatus, setAcceptStatus] = useState<AcceptStatusResponse | null>(null);
   const [demoAccepted, setDemoAccepted] = useState(false);
   const [isResponding, setIsResponding] = useState(false);
+  const [currentTime, setCurrentTime] = useState<number | null>(null);
   const isReturningToQueue = useRef(false);
   const allAccepted = acceptStatus?.all_accepted ?? demoAccepted;
+  const remainingSeconds = acceptStatus?.accept_deadline && currentTime !== null
+    ? Math.max(0, Math.ceil((new Date(acceptStatus.accept_deadline).getTime() - currentTime) / 1000))
+    : acceptStatus?.seconds_remaining ?? null;
 
   const returnToQueueAfterOtherDecline = useCallback(async () => {
     if (isReturningToQueue.current) return;
@@ -251,6 +262,14 @@ function Matched() {
     }
   };
 
+  useEffect(() => {
+    if (allAccepted || remainingSeconds === null) return;
+
+    const timerId = window.setInterval(() => setCurrentTime(Date.now()), 1000);
+
+    return () => window.clearInterval(timerId);
+  }, [allAccepted, remainingSeconds]);
+
   return (
     <main className="content matched-page">
       <header className="matched-header">
@@ -304,6 +323,11 @@ function Matched() {
       </section>
 
       {!allAccepted ? <div className="matched-actions">
+        {remainingSeconds !== null ? (
+          <p className="matched-countdown" aria-live="polite">
+            수락·거절 제한 시간 <strong>{formatRemainingTime(remainingSeconds)}</strong>
+          </p>
+        ) : null}
         <button
           className="matched-reject"
           type="button"

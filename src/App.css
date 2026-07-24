@@ -828,6 +828,22 @@
   gap: 12px;
 }
 
+.matched-countdown {
+  grid-column: 1 / -1;
+  margin: 0;
+  color: #4b5563;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: center;
+}
+
+.matched-countdown strong {
+  margin-left: 6px;
+  color: #5337d6;
+  font-size: 19px;
+  font-weight: 900;
+}
+
 .matched-reject,
 .matched-accept {
   height: 79px;
